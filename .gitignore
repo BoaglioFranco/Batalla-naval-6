@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Battleship/.vs/Battleship/v16/ipch/AutoPCH/d44ab2ce9acf2f6/GAME.ipch
+/.vs
+/Battleship/.vs/Battleship/v16
