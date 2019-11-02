@@ -2,10 +2,16 @@
 //
 
 #include <iostream>
+#include "Game.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	Game demo;
+	if (demo.Construct(900, 300, 2, 2))
+		demo.Start();
+
+	return 0;
+   
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
