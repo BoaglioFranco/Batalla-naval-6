@@ -151,14 +151,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Barco.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Battleship.cpp" />
     <ClCompile Include="src\Mapa.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Barco.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\Mapa.h" />
     <ClInclude Include="src\olcPixelGameEngine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\isodemo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

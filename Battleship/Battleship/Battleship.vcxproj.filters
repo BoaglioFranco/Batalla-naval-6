@@ -24,6 +24,9 @@
     <ClCompile Include="src\Mapa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Barco.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -35,5 +38,13 @@
     <ClInclude Include="src\Mapa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Barco.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\isodemo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
