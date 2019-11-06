@@ -18,13 +18,13 @@
     <ClCompile Include="src\Battleship.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Mapa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Barco.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HumanPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,10 +41,19 @@
     <ClInclude Include="src\Barco.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HumanPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\isodemo.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\Barco.txt.txt" />
   </ItemGroup>
 </Project>

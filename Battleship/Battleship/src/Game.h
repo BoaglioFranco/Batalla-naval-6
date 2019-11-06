@@ -14,7 +14,7 @@ class Game : public olc::PixelGameEngine
 private:
 
 	/// olc::vi2d Son Vectores de 2 dimensiones con su x , y.
-	olc::vi2d vWorldSize = { _WordX , _WordY };/// MAPA principal ... jugador humano.
+	olc::vi2d vWorldSize = { 10,10  };/// MAPA principal ... jugador humano.
 	olc::vi2d vWorldWarSize = { _WordX , _WordY };/// MAPA segundario ... para jugador maquina por ahora...
 
 	olc::vi2d isoTileSize = { 40 , 20 }; /// Tamaño en pixeles de cada una de mis Tiles isometricos.
@@ -29,7 +29,7 @@ private:
 	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
-
+	int cntBarco = 1;
 	/// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
@@ -110,40 +110,8 @@ public:
 		if (col == olc::BLUE) vSelected2 += {+0, -1};
 		if (col == olc::GREEN) vSelected2 += {+0, +1};
 		if (col == olc::YELLOW) vSelected2 += {+1, +0};
-
-		if (GetMouse(0).bPressed)
-		{
-			if (map.valido(vSelected.x, vWorldSize.x, vSelected.y, vWorldSize.y,pWorld,GeneralBelgrano))//map.ValidPlacement(vWorldSize.x, vWorldSize.y, D_UP, GeneralBelgrano, pWorld)
-			{                                                                 // map.valido(vSelected.x,vWorldSize.x,vSelected.y,vWorldSize.y)
-				++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-				++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
-			}
-				
-		}
 		
-		// Handle mouse click to toggle if a tile is visible or not
-		//if (GetMouse(0).bPressed)
-		//{
-		//	// Guard array boundary
-		//	if (vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
-		//	{
-		//		/// Sumandole 1 creo una pieza doble en vertical
-		//		++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-		//		++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) - 1] %= 2;
-		//		//++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) * 2] %= 6;
-		//	}
-		//}
-		
-		
-		if (GetMouse(0).bPressed)
-		{
-			if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
-			{
-				++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] %= 2;
-				++pWarWorld[(vSelected2.y * vWorldWarSize.x + vSelected2.x) + 1] %= 2;
-			}
-		}
-		// Labmda function to convert "world" coordinate into screen space
+		// Funcion Lambda para convertir "world" en cordenadas para la pantalla.
 		auto ToScreen = [&](int x, int y)
 		{
 			return olc::vi2d
@@ -153,6 +121,7 @@ public:
 			};
 		};
 
+		// Lo mismo para mi segundo mapa
 		auto ToScreen2 = [&](int x, int y)
 		{
 			return olc::vi2d
@@ -162,61 +131,55 @@ public:
 			};
 		};
 
-		// Draw World - has binary transparancy so enable masking
+		
+		// Da trasparencia al mundo.
 		SetPixelMode(olc::Pixel::MASK);
 
-		// (0,0) is at top, defined by vOrigin, so draw from top to bottom
-		// to ensure tiles closest to camera are drawn last
+	
+		/// (0,0) es mi tope , dibujo desde el tope hasta el final para
+		/// haer que mis tiles mas cercanas se dibujen al final.
 		for (int y = 0; y < vWorldSize.y; y++)
 		{
 			for (int x = 0; x < vWorldSize.x; x++)
 			{
-				// Convert cell coordinate to world space
+				
+				/// Convierte las celdas a cordenadas del mundo.
 				olc::vi2d vWorld = ToScreen(x, y);
 
 				switch (pWorld[y * vWorldSize.x + x])
 				{
 				case 0:
-					// Invisble Tile                               1 - 0/3 BUG BUENARDO- 0     /// SACAR EL *2
+					// Invisble Tile                               
 					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 1 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				case 1:
-					// grass Visible Tile
+					// Grass visible Tile
 					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				}
 			}
 		}
 
+		/// Es todo lo mismo para dibujar mi segundo mapa con unas cordenadas propias.
 		for (int y = 0; y < vWorldWarSize.y; y++)
 		{
 			for (int x = 0; x < vWorldWarSize.x; x++)
 			{
-				olc::vi2d vWorld2 = ToScreen2(x, y);
+				olc::vi2d vWorld2 = ToScreen2(x, y); 
 
 				switch (pWarWorld[y * vWorldWarSize.x + x])
 				{
 				case 0:
-					// Invisble Tile                               1 - 0/3 BUG BUENARDO- 0     /// SACAR EL *2
+					// Invisble Tile                               
 					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 1 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				case 1:
-					// grass Visible Tile
+					// Grass visible Tile
 					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				}
 
 			}
 		}
-		//std::cout << vWorldSize.x << std::endl;
-		//std::cout << vWorldSize.y << std::endl;
-
-
-		//if (GetMouse(0).bPressed)
-		//{
-		//	std::cout <<"Vselected X = " <<vSelected.x << std::endl;
-		//	std::cout <<"Vselected Y = " << vSelected.y << std::endl;
-		//	//std::cout << "pWorld DATO EN MAPA = " << pWorld[vSelected.x + (vSelected.y*10)] << std::endl;
-		//}
 
 		if (GetKey(olc::Key::E).bHeld)
 		{
@@ -228,7 +191,6 @@ public:
 
 		if (GetKey(olc::Key::A).bPressed)
 		{
-			//vOrigin = { 5, 1 };      /// [vSelected.x + (vSelected.y * 10)]
 			std::cout << "Vselected X = " << vSelected.x << std::endl;
 			std::cout << "Vselected Y = " << vSelected.y << std::endl;
 			std::cout << "pWorld DATO EN MAPA [A] = " << pWorld[vSelected.y * vWorldSize.x + vSelected.x] << std::endl;
@@ -241,24 +203,123 @@ public:
 			std::cout << "WarWorld DATO EN MAPA [B] = " << pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] << std::endl;
 		}
 
-		// Draw Selected Cell - Has varying alpha components
+		// Dibuja el sombreado amaralli en cada tile que selecciono.
 		SetPixelMode(olc::Pixel::ALPHA);
 
-		// Convert selected cell coordinate to world space
+		/// Convierto las cordenadas a espacio "real" en el mundo.
 		olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
-		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y);
+		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y); 
 
-		// Draw "highlight" tile
+		auto AddEvent = [&](std::string s)
+		{
+			listEvents.push_back(s);
+			listEvents.pop_front();
+		};
+
+		int nLog = 0;
+		for (auto& s : listEvents)
+		{
+			// 8 + 20  Separacion entre textos        /// los 3 * 16
+			DrawString(400, nLog * 8 + 20, s, olc::Pixel(nLog * -16, nLog * -16, nLog * -16), 1);
+			nLog++;
+		}
+		
+		if (GetMouse(0).bPressed)
+		{
+			if (map.valido(vSelected.x, vWorldSize.x, vSelected.y, vWorldSize.y, pWorld, GeneralBelgrano, 0))//map.ValidPlacement(vWorldSize.x, vWorldSize.y, D_UP, GeneralBelgrano, pWorld)
+			{   
+				switch (cntBarco)
+				{
+				case 1:
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
+					cntBarco++;
+					break;
+
+				case 2:
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
+					cntBarco++;
+					break;
+
+				case 3:
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
+					cntBarco++;
+					break;
+
+				case 4:
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3] %= 2;
+					cntBarco++;
+					break;
+				
+				case 5:
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 4] %= 2;
+					cntBarco++;
+					break;
+
+				default:
+					AddEvent("Todos los barcos en mapa");
+					break;
+				}
+			}else{
+				AddEvent("Fuera del mapa");
+			}
+			
+		}
+
+		if (GetMouse(0).bPressed)
+		{
+			if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
+			{
+				++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] %= 2;
+				++pWarWorld[(vSelected2.y * vWorldWarSize.x + vSelected2.x) + 1] %= 2;
+			}
+		}
+
+		// Doy la textura de seleccion para cada barco y el mundo
 		if (vMouse.x && vMouse.y != NULL) /// size del barquito y rotazion 
 		{
-			int tamaño = 2;
-			switch (tamaño)
+			switch (cntBarco)
 			{
-			case 2: // horizontal
+			case 1: // horizontal
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
+			case 2:
+				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				break;
+			case 3:
+				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				break;
+			case 4:
+				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 60, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				break;
+			case 5:
+				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 60, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 80, vSelectedWorld.y + 40, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				break;
 			default:
+				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			}
 
@@ -309,25 +370,15 @@ public:
 		DrawString(4, 34, "Selected2 X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
 		DrawString(10, 44, "FRANCO SE LA COME", olc::RED);*/
 
-		auto AddEvent = [&](std::string s)
-		{
-			listEvents.push_back(s);
-			listEvents.pop_front();
-		};
+		
 
-		if (GetMouse(0).bPressed)	AddEvent("Hola");
+		/*if (GetMouse(0).bPressed)	AddEvent("Hola");
 		if (GetMouse(0).bReleased)	AddEvent("esto es un test");
 		if (GetMouse(1).bPressed)	AddEvent("Q(-o-)__o___i_____Q(-o-)");
-		if (GetMouse(1).bReleased)	AddEvent("dos chinos jugando ping pong");
+		if (GetMouse(1).bReleased)	AddEvent("dos chinos jugando ping pong");*/
 
 		// Dibujo los textos por eventos
-		int nLog = 0;
-		for (auto& s : listEvents)
-		{
-			// 8 + 20  Separacion entre textos        /// los 3 * 16
-			DrawString(400, nLog * 8 + 20, s, olc::Pixel(nLog * -16, nLog * -16, nLog * -16), 1);
-			nLog++;
-		}
+	
 
 
 		return true;
