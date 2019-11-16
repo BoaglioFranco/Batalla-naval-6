@@ -31,3 +31,12 @@ void Barco::registerShot() {
 	hits++;
 }
 
+bool Barco::getOrientation()
+{
+	return isVertical;
+}
+
+void Barco::setOrientation(bool ori)
+{
+	isVertical = ori;
+}

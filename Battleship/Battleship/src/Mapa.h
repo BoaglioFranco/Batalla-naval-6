@@ -2,17 +2,18 @@
 #include <iostream>
 #include <string>
 #include "Barco.h"
+#include "Celda.h"
 
-class MAPA 
+class Mapa 
 {
 public:
-	MAPA() {};
-	~MAPA() {};
+	Mapa() {};
+	~Mapa() {};
+	Celda grid[10][10];
 	
 	
-	bool valido(int SelecX, int WorldX, int SelecY, int WorldY, int* world, Barco& Ship, int orientacion);
-	bool validPlacement(int x, int y, Dir orientacion, Barco& Ship); /// int worldsizeX, int worlsizeY
-	bool insertShip(Barco& Ship);
+	bool validPlacement(int x, int y, Barco& Ship);/// int worldsizeX, int worlsizeY
+	bool insertShip(int x, int y, Barco& ship);
 
 };
 

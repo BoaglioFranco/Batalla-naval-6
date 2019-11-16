@@ -33,7 +33,7 @@ private:
 	/// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
-	MAPA map;
+	Mapa map;
 	Barco GeneralBelgrano;
 
 public:
@@ -180,6 +180,12 @@ public:
 
 			}
 		}
+
+
+
+
+		el usuario hace un click el cualquier parte del mapa
+
 
 		if (GetKey(olc::Key::E).bHeld)
 		{

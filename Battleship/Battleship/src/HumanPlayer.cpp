@@ -1,5 +1,6 @@
 #include "HumanPlayer.h"
 
+
 HumanPlayer::HumanPlayer(const std::string& name) {
 	this->name = name;
 
@@ -22,9 +23,9 @@ HumanPlayer::HumanPlayer(const std::string& name) {
 
 }
 
-void HumanPlayer::placeShips() {
+ void HumanPlayer::placeShips(int a int b) {
 	//TODO: una version de este metodo que no sea pedorra.
-
+	pleisyip(int pito, int culo)
 
 }
 
