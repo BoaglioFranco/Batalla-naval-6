@@ -25,11 +25,12 @@ private:
 	/// Puntero que va a contener mis sprite a dibujar en consola.
 	olc::Sprite* isoPng = nullptr;
 	/// Supongo que voy a tener uno para cada barco y un contador para ir diferenciandolos.
-
+	
 	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
 	int cntBarco = 1;
+	
 	/// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
@@ -53,12 +54,12 @@ public:
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
-		
+	
 		GeneralBelgrano.setSize(3);
 		/// Un for para ir cambiando de eventos.
 		for (int i = 0; i < 10; i++)
 			listEvents.push_back("");
-
+		
 		
 		return true;
 	}
@@ -99,17 +100,19 @@ public:
 			(vCell.y - vWarOrigen.y) - (vCell.x - vWarOrigen.x)
 		};
 
+		int nLog = 0;
+		
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
-		if (col == olc::BLUE) vSelected += {+0, -1};
-		if (col == olc::GREEN) vSelected += {+0, +1};
-		if (col == olc::YELLOW) vSelected += {+1, +0};
+		else if (col == olc::BLUE) vSelected += {+0, -1};
+		else if (col == olc::GREEN) vSelected += {+0, +1};
+		else if (col == olc::YELLOW) vSelected += {+1, +0};
 
 		/// Lo mismo pero para el mapa 2 ( ͡° ͜ʖ ͡° )
-		if (col == olc::RED) vSelected2 += {-1, +0};
-		if (col == olc::BLUE) vSelected2 += {+0, -1};
-		if (col == olc::GREEN) vSelected2 += {+0, +1};
-		if (col == olc::YELLOW) vSelected2 += {+1, +0};
+		else if (col == olc::RED) vSelected2 += {-1, +0};
+		else if (col == olc::BLUE) vSelected2 += {+0, -1};
+		else if (col == olc::GREEN) vSelected2 += {+0, +1};
+		else if (col == olc::YELLOW) vSelected2 += {+1, +0};
 		
 		// Funcion Lambda para convertir "world" en cordenadas para la pantalla.
 		auto ToScreen = [&](int x, int y)
@@ -135,7 +138,9 @@ public:
 		// Da trasparencia al mundo.
 		SetPixelMode(olc::Pixel::MASK);
 
-	
+	    
+
+		/// Mundo [1]
 		/// (0,0) es mi tope , dibujo desde el tope hasta el final para
 		/// haer que mis tiles mas cercanas se dibujen al final.
 		for (int y = 0; y < vWorldSize.y; y++)
@@ -149,8 +154,8 @@ public:
 				switch (pWorld[y * vWorldSize.x + x])
 				{
 				case 0:
-					// Invisble Tile                               
-					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 1 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+					// Ocean Tile
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x * 2, isoTileSize.y * 2);
 					break;
 				case 1:
 					// Grass visible Tile
@@ -159,6 +164,8 @@ public:
 			}
 		}
 
+
+		/// Mundo [2]
 		/// Es todo lo mismo para dibujar mi segundo mapa con unas cordenadas propias.
 		for (int y = 0; y < vWorldWarSize.y; y++)
 		{
@@ -188,7 +195,7 @@ public:
 			listEvents.pop_front();
 		};
 
-		int nLog = 0;
+		
 		for (auto& s : listEvents)
 		{
 			// 8 + 20  Separacion entre textos        /// los 3 * 16
@@ -205,7 +212,10 @@ public:
 		/**/
 
 
-		
+		if (GetKey(olc::Key::A).bPressed)
+		{
+			std::cout <<"Dato en mapa " << pWorld[vSelected.y * vWorldSize.x + vSelected.x] << std::endl;
+		}
 
 		if (GetKey(olc::Key::E).bHeld)
 		{
@@ -267,11 +277,18 @@ public:
 					break;
 
 				default:
-					AddEvent("Todos los barcos en mapa");
 					break;
 				}
+
 			}else{
-				AddEvent("Fuera del mapa");
+			    
+				if (pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
+					AddEvent("Estas sobre otro barco :c");
+
+				else if(!(vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y))
+					AddEvent("Fuera del mapa :C");
+
+				/// Falta mensaje de "Todos los barcos en mapa"
 			}
 			
 		}
@@ -350,14 +367,12 @@ public:
 		if (vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
 		{
 			DrawString(4, 24, "Mapa[1] X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
-
 		}
 		else if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
 		{
 			DrawString(4, 24, "Mapa[2] X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
 		}
-		else {
-
+		else{
 			DrawString(4, 24, "Mapa [1]: Fuera del mapa ", olc::BLACK);
 			DrawString(4, 34, "Mapa [2]: Fuera del mapa ", olc::BLACK);
 		}
