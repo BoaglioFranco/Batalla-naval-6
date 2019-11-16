@@ -23,9 +23,8 @@ HumanPlayer::HumanPlayer(const std::string& name) {
 
 }
 
- void HumanPlayer::placeShips(int a int b) {
+ void HumanPlayer::placeShips() {
 	//TODO: una version de este metodo que no sea pedorra.
-	pleisyip(int pito, int culo)
 
 }
 

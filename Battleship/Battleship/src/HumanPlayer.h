@@ -8,6 +8,6 @@ class HumanPlayer :
 public:
 	HumanPlayer(const std::string& name);
 	void disparar() override;
-	static void placeShips() override;
+	void placeShips() override;
 
 };

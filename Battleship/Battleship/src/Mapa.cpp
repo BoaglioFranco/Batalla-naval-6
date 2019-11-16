@@ -5,7 +5,7 @@ bool Mapa::validPlacement(int x, int y, Barco& Ship)
 	bool isvalidPlacement = false;
 	bool isvalidX;
 	bool isvalidY;
-	bool vertical = Ship.getOrientation;
+	bool vertical = Ship.getOrientation();
 
 	int i = x, j = y;
 	///Existen 2 orientaciones vertial (1) y horizontal(0)
@@ -31,8 +31,6 @@ bool Mapa::validPlacement(int x, int y, Barco& Ship)
 		}
 	}
 
-
-
 	return isvalidPlacement;
 }
 
@@ -41,7 +39,7 @@ bool Mapa::insertShip(int x, int y, Barco& ship)
 {
 	int i = x, j = y;
 	bool valid = validPlacement(x, y, ship);
-	bool vertical = ship.getOrientation;
+	bool vertical = ship.getOrientation();
 
 	if (valid) { //Inserta el barco en las casillas y guarda la direccion de memoria del barco en ellas
 		if (vertical) {

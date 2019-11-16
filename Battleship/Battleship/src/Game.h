@@ -5,13 +5,13 @@
 #include "Mapa.h"
 
 
-const int _WordX = 10;
-const int _WordY = 10;
-
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine 
 {
 private:
+
+    static const int _WordX = 10; /// Tamño de mi mapa eje x 
+	static const int _WordY = 10; /// Tamño de mi mapa eje y
 
 	/// olc::vi2d Son Vectores de 2 dimensiones con su x , y.
 	olc::vi2d vWorldSize = { 10,10  };/// MAPA principal ... jugador humano.
@@ -182,40 +182,6 @@ public:
 		}
 
 
-
-
-		el usuario hace un click el cualquier parte del mapa
-
-
-		if (GetKey(olc::Key::E).bHeld)
-		{
-			SetPixelMode(olc::Pixel::NORMAL);
-			Clear(olc::WHITE);
-			vWarOrigen = { 16, 1 };
-		}
-
-
-		if (GetKey(olc::Key::A).bPressed)
-		{
-			std::cout << "Vselected X = " << vSelected.x << std::endl;
-			std::cout << "Vselected Y = " << vSelected.y << std::endl;
-			std::cout << "pWorld DATO EN MAPA [A] = " << pWorld[vSelected.y * vWorldSize.x + vSelected.x] << std::endl;
-		}
-
-		if (GetKey(olc::Key::B).bPressed)
-		{
-			std::cout << "Vselected X = " << vSelected.x << std::endl;
-			std::cout << "Vselected Y = " << vSelected.y << std::endl;
-			std::cout << "WarWorld DATO EN MAPA [B] = " << pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] << std::endl;
-		}
-
-		// Dibuja el sombreado amaralli en cada tile que selecciono.
-		SetPixelMode(olc::Pixel::ALPHA);
-
-		/// Convierto las cordenadas a espacio "real" en el mundo.
-		olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
-		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y); 
-
 		auto AddEvent = [&](std::string s)
 		{
 			listEvents.push_back(s);
@@ -229,10 +195,37 @@ public:
 			DrawString(400, nLog * 8 + 20, s, olc::Pixel(nLog * -16, nLog * -16, nLog * -16), 1);
 			nLog++;
 		}
+
+		//////////////////////////////// FIN PRIMITIVAS DEL JUEGO ///////////////////////////////////////////////
+
+		/*Luego de dibujar las primitivas del mapa entra el jugador y bot con sus methodos*/
+		/*El jugador coloca sus baracos al terminar se colocan barcos al bot*/
+		/*El jugar dispara y recibe la informacion del bot*/
+		/*Bot dispara y recibo la informacion*/
+		/**/
+
+
+		
+
+		if (GetKey(olc::Key::E).bHeld)
+		{
+			SetPixelMode(olc::Pixel::NORMAL);
+			Clear(olc::WHITE);
+			vWarOrigen = { 16, 1 };
+		}
+
+
+		// Dibuja el sombreado amaralli en cada tile que selecciono.
+		SetPixelMode(olc::Pixel::ALPHA);
+
+		/// Convierto las cordenadas a espacio "real" en el mundo.
+		olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
+		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y); 
+
 		
 		if (GetMouse(0).bPressed)
 		{
-			if (map.valido(vSelected.x, vWorldSize.x, vSelected.y, vWorldSize.y, pWorld, GeneralBelgrano, 0))//map.ValidPlacement(vWorldSize.x, vWorldSize.y, D_UP, GeneralBelgrano, pWorld)
+			if (map.insertShip(vSelected.x, vSelected.y, GeneralBelgrano))//map.ValidPlacement(vWorldSize.x, vWorldSize.y, D_UP, GeneralBelgrano, pWorld)
 			{   
 				switch (cntBarco)
 				{
@@ -283,6 +276,8 @@ public:
 			
 		}
 
+
+		/// Datos para el mapa 2
 		if (GetMouse(0).bPressed)
 		{
 			if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
@@ -339,17 +334,14 @@ public:
 			//DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, sprIsom, 0 * vTileSize.x, 0, vTileSize.x, vTileSize.y);
 		}
 
-		/*if (GetMouse(0).bPressed)
-		{
-			std::cout << "X = " << vSelectedWorld.x << std::endl;
-			std::cout << "Y = " << vSelectedWorld.x << std::endl;
-		}*/
+
+
+		///////////////// DIBUJO DATOS AL MAPA /////////////////////////////////////////////////////////////////
+
+
 
 		// Go back to normal drawing with no expected transparency
 		SetPixelMode(olc::Pixel::NORMAL);
-
-		// Draw Hovered Cell Boundary
-		//DrawRect(vCell.x * vTileSize.x, vCell.y * vTileSize.y, vTileSize.x, vTileSize.y, olc::RED);
 
 		// Draw Debug Info
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
@@ -358,33 +350,17 @@ public:
 		if (vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
 		{
 			DrawString(4, 24, "Mapa[1] X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
-			DrawString(10, 34, "FRANCO SE LA COME", olc::RED);
 
 		}
 		else if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
 		{
 			DrawString(4, 24, "Mapa[2] X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
-			DrawString(10, 34, "MARTIN SE LA COME", olc::RED);
 		}
 		else {
 
 			DrawString(4, 24, "Mapa [1]: Fuera del mapa ", olc::BLACK);
 			DrawString(4, 34, "Mapa [2]: Fuera del mapa ", olc::BLACK);
 		}
-		/*
-		DrawString(4, 24, "Selected  X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
-		DrawString(4, 34, "Selected2 X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
-		DrawString(10, 44, "FRANCO SE LA COME", olc::RED);*/
-
-		
-
-		/*if (GetMouse(0).bPressed)	AddEvent("Hola");
-		if (GetMouse(0).bReleased)	AddEvent("esto es un test");
-		if (GetMouse(1).bPressed)	AddEvent("Q(-o-)__o___i_____Q(-o-)");
-		if (GetMouse(1).bReleased)	AddEvent("dos chinos jugando ping pong");*/
-
-		// Dibujo los textos por eventos
-	
 
 
 		return true;
