@@ -290,7 +290,8 @@ public:
 
 			}else{
 			    
-				if (pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
+				if ((vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y) 
+					&& pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
 					AddEvent("Estas sobre otro barco :c");
 
 				else if(!(vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
