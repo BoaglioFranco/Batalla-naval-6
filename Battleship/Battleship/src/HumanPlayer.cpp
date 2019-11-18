@@ -41,3 +41,5 @@ void HumanPlayer::pHumanPlayer(const std::string& name) {
 
 
 void HumanPlayer::disparar() {};
+
+

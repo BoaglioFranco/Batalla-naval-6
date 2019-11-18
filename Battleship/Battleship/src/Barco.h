@@ -7,6 +7,7 @@ class Barco
 private:
 	int size;
 	int hits;
+	bool isSunk = false;
 	bool isVertical = true;
 public:
 	std::string name;
@@ -16,8 +17,7 @@ public:
 
 	bool getOrientation();
 	void setOrientation();
-	
-	bool Hundido();
+	Barco hundido(Barco& barquito);
 	
 	
 	void setSize(int size);

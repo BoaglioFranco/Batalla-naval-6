@@ -77,7 +77,3 @@ bool Mapa::insertShip(int x, int y, Barco& ship)
 	return valid;
 }
 
-Barco& Mapa::sendReference(Barco& barquito) {
-	if(barquito.Hundido())
-		return barquito;
-}
