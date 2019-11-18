@@ -19,6 +19,7 @@ public:
 	
 	bool Hundido();
 	
+	
 	void setSize(int size);
 	int getSize();
 	
