@@ -99,8 +99,9 @@ public:
 			(vCell.y - vWarOrigen.y) - (vCell.x - vWarOrigen.x)
 		};
 
-		int nLog = 0;
-		int Hori = 1;
+		int nLog = 0; /// variable de control textos flotantes.
+		int Hori = 1; /// variable de 
+		int vert = 1;
 		
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
@@ -194,12 +195,11 @@ public:
 			listEvents.push_back(s);
 			listEvents.pop_front();
 		};
-
 		
 		for (auto& s : listEvents)
 		{
 			// 8 + 20  Separacion entre textos        /// los 3 * 16
-			DrawString(400, nLog * 8 + 20, s, olc::Pixel(nLog * -16, nLog * -16, nLog * -16), 1);
+			DrawString(400, nLog * 8 - 8, s, olc::Pixel(nLog * -17, nLog * -17, nLog * -17));
 			nLog++;
 		}
 
@@ -211,20 +211,19 @@ public:
 		/*Bot dispara y recibo la informacion*/
 		/**/
 
-
-		if (GetKey(olc::Key::A).bPressed)
+		/// Rotacion de los barcos.
+		if (GetKey(olc::Key::R).bPressed)
 		{
-			std::cout <<"Dato en mapa " << pWorld[vSelected.y * vWorldSize.x + vSelected.x] << std::endl;
+			p1.piezas[cntBarco].setOrientation();
 		}
 
-		if (GetKey(olc::Key::E).bHeld)
+		if (GetKey(olc::Key::E).bPressed)
 		{
-			/*SetPixelMode(olc::Pixel::NORMAL);
+			SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::WHITE);
-			vWarOrigen = { 16, 1 };*/ 
+			vWarOrigen = { 16, 1 };
 			system("cls");
 			p1.A.mostrarMapa();
-			
 		}
 
 
@@ -314,48 +313,42 @@ public:
 		// Doy la textura de seleccion para cada barco y el mundo
 		if (vMouse.x && vMouse.y != NULL) /// size del barquito y rotazion 
 		{
+			if (p1.piezas[cntBarco].getOrientation())
+				vert = -1; /// Convierto cada posicion en negativo para seguir la rotacion 
+
 			switch (cntBarco)
 			{
-			case 0: // Vertical
+			case 0: 
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20 * vert, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			case 1:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20 * vert, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40 * vert, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			case 2:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20 * vert, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40 * vert, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			case 3:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 60, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20 * vert, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40 * vert, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 60 * vert, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			case 4:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 60, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 80, vSelectedWorld.y + 40, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20 * vert, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40 * vert, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 60 * vert, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 80 * vert, vSelectedWorld.y + 40, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			default:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			}
-
-
-			//X +20  ----- Y + 10 --- o --- X -20 Y -10 desde el centro   VERTICAL
-			//DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, sprIsom, 0 * vTileSize.x, 0, vTileSize.x, vTileSize.y);
-
-			 // X - 20  ---- Y + 10 HORIZONTAL 
-			//DrawPartialSprite(vSelectedWorld.x - 20, vSelectedWorld.y + 10, sprIsom, 0 * vTileSize.x, 0, vTileSize.x, vTileSize.y);
-
-			//DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, sprIsom, 0 * vTileSize.x, 0, vTileSize.x, vTileSize.y);
 		}
 
 
