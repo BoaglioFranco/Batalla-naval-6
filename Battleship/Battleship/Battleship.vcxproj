@@ -170,7 +170,7 @@
     <Image Include="assets\isodemo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\Barco.txt.txt" />
+    <Text Include="src\Barco.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
