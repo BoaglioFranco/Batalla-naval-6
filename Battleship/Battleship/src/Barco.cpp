@@ -4,7 +4,6 @@ Barco::Barco(int size, std::string name) {
 	this->size = size;
 	hits = 0;
 	this->name = name;
-	isVertical = true;
 }
 
 Barco::Barco() {
