@@ -33,3 +33,8 @@ bool Barco::getOrientation()
 {
 	return this->isVertical;
 }
+
+void Barco::setOrientation()
+{
+	isVertical = !isVertical;
+}

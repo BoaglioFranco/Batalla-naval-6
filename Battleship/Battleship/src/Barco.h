@@ -15,7 +15,7 @@ public:
 	Barco();
 
 	bool getOrientation();
-	//void setOrientation(bool ori);
+	void setOrientation();
 	
 	bool Hundido();
 	
