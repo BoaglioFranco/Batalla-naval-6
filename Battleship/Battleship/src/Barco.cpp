@@ -4,6 +4,7 @@ Barco::Barco(int size, std::string name) {
 	this->size = size;
 	hits = 0;
 	this->name = name;
+	isVertical = true;
 }
 
 Barco::Barco() {
@@ -31,10 +32,5 @@ void Barco::registerShot() {
 
 bool Barco::getOrientation()
 {
-	return isVertical;
-}
-
-void Barco::setOrientation(bool ori)
-{
-	isVertical = ori;
+	return this->isVertical;
 }

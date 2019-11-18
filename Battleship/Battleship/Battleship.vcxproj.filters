@@ -66,6 +66,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\Barco.txt.txt" />
+    <Text Include="src\Barco.txt" />
   </ItemGroup>
 </Project>
