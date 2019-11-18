@@ -38,3 +38,4 @@ void Barco::setOrientation(bool ori)
 {
 	isVertical = ori;
 }
+
