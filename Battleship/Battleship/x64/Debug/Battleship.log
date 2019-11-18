@@ -1,8 +1,7 @@
-﻿  Celda.cpp
-  HumanPlayer.cpp
-  Barco.cpp
+﻿  Barco.cpp
   Battleship.cpp
+  Celda.cpp
+  HumanPlayer.cpp
   Mapa.cpp
   Generating Code...
-  LINK : C:\Users\marti\Source\Repos\BoaglioFranco\Batalla-naval-6\Battleship\x64\Debug\Battleship.exe not found or not built by the last incremental link; performing full link
-  Battleship.vcxproj -> C:\Users\marti\Source\Repos\BoaglioFranco\Batalla-naval-6\Battleship\x64\Debug\Battleship.exe
+  Battleship.vcxproj -> C:\Users\Carlos Cordoba\source\repos\Batalla-naval-6\Battleship\x64\Debug\Battleship.exe

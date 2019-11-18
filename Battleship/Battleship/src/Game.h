@@ -2,14 +2,14 @@
 #include "olcPixelGameEngine.h"
 #include <string>
 #include <iostream>
-#include "Mapa.h"
+#include "HumanPlayer.h"
 
 
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine 
 {
 private:
-
+	
     static const int _WordX = 10; /// Tamño de mi mapa eje x 
 	static const int _WordY = 10; /// Tamño de mi mapa eje y
 
@@ -26,19 +26,20 @@ private:
 	olc::Sprite* isoPng = nullptr;
 	/// Supongo que voy a tener uno para cada barco y un contador para ir diferenciandolos.
 	
+	
+	HumanPlayer  p1;
+	std::string name = "Facu";
 	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
-	int cntBarco = 1;
+	int cntBarco = 0;
 	
 	/// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
-	Mapa map;
-	Barco GeneralBelgrano;
-
 public:
 
+	
 	Game()
 	{
 		sAppName = "Game";
@@ -50,16 +51,14 @@ public:
 	{
 		/// Cargo la direecion de mis sprites.
 		isoPng = new olc::Sprite("assets/isodemo.png");
-
+		p1.pHumanPlayer(name);
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
 	
-		GeneralBelgrano.setSize(3);
 		/// Un for para ir cambiando de eventos.
 		for (int i = 0; i < 10; i++)
 			listEvents.push_back("");
-		
 		
 		return true;
 	}
@@ -101,6 +100,7 @@ public:
 		};
 
 		int nLog = 0;
+		int Hori = 1;
 		
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
@@ -109,7 +109,7 @@ public:
 		else if (col == olc::YELLOW) vSelected += {+1, +0};
 
 		/// Lo mismo pero para el mapa 2 ( ͡° ͜ʖ ͡° )
-		else if (col == olc::RED) vSelected2 += {-1, +0};
+	    if (col == olc::RED) vSelected2 += {-1, +0};
 		else if (col == olc::BLUE) vSelected2 += {+0, -1};
 		else if (col == olc::GREEN) vSelected2 += {+0, +1};
 		else if (col == olc::YELLOW) vSelected2 += {+1, +0};
@@ -219,9 +219,12 @@ public:
 
 		if (GetKey(olc::Key::E).bHeld)
 		{
-			SetPixelMode(olc::Pixel::NORMAL);
+			/*SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::WHITE);
-			vWarOrigen = { 16, 1 };
+			vWarOrigen = { 16, 1 };*/ 
+			system("cls");
+			p1.A.mostrarMapa();
+			
 		}
 
 
@@ -235,48 +238,53 @@ public:
 		
 		if (GetMouse(0).bPressed)
 		{
-			if (map.insertShip(vSelected.x, vSelected.y, GeneralBelgrano))//map.ValidPlacement(vWorldSize.x, vWorldSize.y, D_UP, GeneralBelgrano, pWorld)
-			{   
+			if (p1.placeShips(vSelected.x,vSelected.y)){
+				if (p1.piezas[cntBarco].getOrientation())
+					Hori = 10;
+	
+					
 				switch (cntBarco)
 				{
+				case 0:
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
+					cntBarco++;
+					break;
+
 				case 1:
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
 					cntBarco++;
 					break;
 
 				case 2:
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
 					cntBarco++;
 					break;
 
 				case 3:
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
-					cntBarco++;
-					break;
-
-				case 4:
-					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
 					cntBarco++;
 					break;
 				
-				case 5:
+				case 4:
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 4] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 4 * Hori] %= 2;
 					cntBarco++;
 					break;
 
 				default:
+					AddEvent("TODOS LOS BARCOS EN MAPA");
+					AddEvent("Empieza fase Guerra!!!!");
 					break;
 				}
 
@@ -285,22 +293,20 @@ public:
 				if (pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
 					AddEvent("Estas sobre otro barco :c");
 
-				else if(!(vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y))
-					AddEvent("Fuera del mapa :C");
+				else if(!(vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
+					&& !(vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y))
+					AddEvent("Fuera de los Mapas");
 
 				/// Falta mensaje de "Todos los barcos en mapa"
 			}
 			
 		}
-
-
 		/// Datos para el mapa 2
 		if (GetMouse(0).bPressed)
 		{
 			if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
 			{
-				++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] %= 2;
-				++pWarWorld[(vSelected2.y * vWorldWarSize.x + vSelected2.x) + 1] %= 2;
+				
 			}
 		}
 
@@ -309,9 +315,14 @@ public:
 		{
 			switch (cntBarco)
 			{
-			case 1: // horizontal
+			case 0: // Vertical
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				break;
+			case 1:
+				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
 			case 2:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
@@ -322,14 +333,9 @@ public:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				break;
-			case 4:
-				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
-				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 60, vSelectedWorld.y + 30, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				break;
-			case 5:
+			case 4:
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 20, vSelectedWorld.y + 10, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 				DrawPartialSprite(vSelectedWorld.x + 40, vSelectedWorld.y + 20, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
@@ -363,18 +369,19 @@ public:
 		// Draw Debug Info
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
+		DrawString(4, 24,"Jugador -> ["+p1.name+"]", olc::RED);
 
 		if (vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
 		{
-			DrawString(4, 24, "Mapa[1] X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
+			DrawString(4, 34, "Mapa[1] X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
 		}
 		else if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
 		{
-			DrawString(4, 24, "Mapa[2] X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
+			DrawString(4, 34, "Mapa[2] X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
 		}
 		else{
-			DrawString(4, 24, "Mapa [1]: Fuera del mapa ", olc::BLACK);
-			DrawString(4, 34, "Mapa [2]: Fuera del mapa ", olc::BLACK);
+			DrawString(4, 34, "Mapa [1]: Fuera del mapa ", olc::BLACK);
+			DrawString(4, 44, "Mapa [2]: Fuera del mapa ", olc::BLACK);
 		}
 
 

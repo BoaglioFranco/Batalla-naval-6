@@ -1,7 +1,7 @@
 #include "HumanPlayer.h"
 
 
-HumanPlayer::HumanPlayer(const std::string& name) {
+void HumanPlayer::pHumanPlayer(const std::string& name) {
 	this->name = name;
 
 
@@ -19,13 +19,25 @@ HumanPlayer::HumanPlayer(const std::string& name) {
 		}
 	}
 	archivoBarcos.close();
-
-
 }
 
- void HumanPlayer::placeShips() {
-	//TODO: una version de este metodo que no sea pedorra.
+ bool HumanPlayer::placeShips(int& x, int& y) {
+	 static int i = 0;
+	 bool ace;
 
+	 if(A.insertShip(x, y, piezas[i]) && i != 5)
+	 {
+		/* std::cout << "Se coloco en mapa el Barco: " << piezas[i].name
+			 << "\n tamaño: " << piezas[i].getSize() << "\n"
+			 << "------------------------------------------" << std::endl;*/
+		 i++;
+		 ace = true;
+	 }
+	 else{
+		 ace = false;
+	 }
+	 
+	 return ace;
 }
 
 

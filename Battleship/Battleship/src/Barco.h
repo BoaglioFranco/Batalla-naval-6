@@ -2,14 +2,12 @@
 #include <iostream>
 #include <string>
 
-
-
 class Barco
 {
 private:
 	int size;
 	int hits;
-	bool isVertical;
+	bool isVertical = true;
 public:
 	std::string name;
 	
@@ -17,7 +15,7 @@ public:
 	Barco();
 
 	bool getOrientation();
-	void setOrientation(bool ori);
+	//void setOrientation(bool ori);
 	
 	bool Hundido();
 	

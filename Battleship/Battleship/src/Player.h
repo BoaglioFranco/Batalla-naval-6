@@ -8,7 +8,7 @@ public:
 	Barco piezas[5];
 	bool hasFleet;
 	virtual void disparar() = 0;
-	virtual void placeShips() = 0;
+	virtual bool placeShips(int& x, int& y) = 0;
 };
 
 

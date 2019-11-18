@@ -2,12 +2,16 @@
 #include "Player.h"
 #include <fstream>
 #include "Mapa.h"
+
 class HumanPlayer :
 	public Player
 {
 public:
-	HumanPlayer(const std::string& name);
+	HumanPlayer() {};
+	void pHumanPlayer(const std::string& name);
 	void disparar() override;
-	void placeShips() override;
-
+	bool placeShips(int& x, int& y) override;
+	Mapa A;
+private:
+	 /// Mapa del jugador
 };

@@ -31,11 +31,5 @@ void Barco::registerShot() {
 
 bool Barco::getOrientation()
 {
-	return isVertical;
+	return this->isVertical;
 }
-
-void Barco::setOrientation(bool ori)
-{
-	isVertical = ori;
-}
-
