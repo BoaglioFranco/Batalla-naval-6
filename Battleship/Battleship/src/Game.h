@@ -53,7 +53,6 @@ public:
 
 	void Winner(HumanPlayer& p1, HumanPlayer& p2)
 	{
-		bool Winner;
 
 		if (p1.revisarFlota() == false)
 		{
@@ -71,9 +70,6 @@ public:
 			Clear(olc::WHITE);
 			DrawString(4, 34, Ganador, olc::BLACK, 5);
 		}
-
-		
-
 	}
 
 
