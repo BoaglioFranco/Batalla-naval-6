@@ -76,3 +76,13 @@ bool Mapa::insertShip(int x, int y, Barco& ship)
 
 	return valid;
 }
+
+ bool Mapa::RegistrarDisparo(int& x , int& y)
+{
+	if (grid[x][y].isShot == false)
+	{
+		grid[x][y].registrarDisparo();
+	}
+
+	return grid[x][y].isShot;
+}

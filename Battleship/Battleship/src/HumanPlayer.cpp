@@ -4,7 +4,6 @@
 void HumanPlayer::pHumanPlayer(const std::string& name) {
 	this->name = name;
 
-
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
 	archivoBarcos.open("barcos.txt");
 	if (archivoBarcos.fail()) {
@@ -21,24 +20,55 @@ void HumanPlayer::pHumanPlayer(const std::string& name) {
 	archivoBarcos.close();
 }
 
- bool HumanPlayer::placeShips(int& x, int& y) {
-	 static int i = 0;
+ bool HumanPlayer::placeShips(int& x, int& y, int i) {
+
 	 bool ace;
 
-	 if(A.insertShip(x, y, piezas[i]) && i != 5)
+	 if (MAPA.insertShip(x, y, piezas[i]) && i < 5)
 	 {
-		/* std::cout << "Se coloco en mapa el Barco: " << piezas[i].name
+		   std::cout << "Player " + name + " inserto el barco -> " + piezas[i].name << std::endl;
+		   std::cout << "Se coloco en mapa el Barco: " << piezas[i].name
 			 << "\n tamaño: " << piezas[i].getSize() << "\n"
-			 << "------------------------------------------" << std::endl;*/
-		 i++;
+			 << "------------------------------------------" << std::endl;
 		 ace = true;
 	 }
-	 else{
+	 else {
 		 ace = false;
 	 }
-	 
+
 	 return ace;
+ }
+
+
+std::string HumanPlayer::disparar(int& x, int& y,Mapa& Mapa_enemigo) {
+	
+	std::string disparo;
+	
+	if(Mapa_enemigo.RegistrarDisparo(x, y))
+	{
+		disparo = "Disparo en X["+ std::to_string(x) +"]"+"Y["+std::to_string(y)+"]"; /// harcodeo duro e inesperado
+	}
+	
+
+	return disparo;
 }
 
 
-void HumanPlayer::disparar() {};
+bool HumanPlayer::revisarFlota()
+{
+	 int i = 0;
+	 int flag = 0;
+
+	while (i < 5 && flag == 0)
+	{
+		if (piezas[i].hundido())
+			i++;
+		else
+			flag = 1;
+	}
+	
+	if (flag == 0)
+		this->TieneFlota = false;
+	
+	return this->TieneFlota;
+}

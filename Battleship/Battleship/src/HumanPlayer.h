@@ -9,9 +9,10 @@ class HumanPlayer :
 public:
 	HumanPlayer() {};
 	void pHumanPlayer(const std::string& name);
-	void disparar() override;
-	bool placeShips(int& x, int& y) override;
-	Mapa A;
+	std::string disparar(int& x, int& y,Mapa& Mapa_enemigo) override;
+	bool placeShips(int& x, int& y, int i) override;
+	bool revisarFlota();
+	Mapa MAPA;
 private:
 	 /// Mapa del jugador
 };
