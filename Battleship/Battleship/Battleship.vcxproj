@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Celda.cpp" />
+    <ClCompile Include="src\ComputerPlayer.cpp" />
     <ClCompile Include="src\HumanPlayer.cpp" />
     <ClCompile Include="src\Barco.cpp" />
     <ClCompile Include="src\Battleship.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Celda.h" />
+    <ClInclude Include="src\ComputerPlayer.h" />
     <ClInclude Include="src\HumanPlayer.h" />
     <ClInclude Include="src\Barco.h" />
     <ClInclude Include="src\Game.h" />

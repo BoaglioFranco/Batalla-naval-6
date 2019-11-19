@@ -1,7 +1,6 @@
 #include "HumanPlayer.h"
 
-
-void HumanPlayer::pHumanPlayer(const std::string& name) {
+ HumanPlayer::HumanPlayer(const std::string& name) {
 	this->name = name;
 
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
