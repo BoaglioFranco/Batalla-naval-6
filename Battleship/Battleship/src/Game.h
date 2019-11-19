@@ -6,15 +6,15 @@
 
 
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
-class Game : public olc::PixelGameEngine 
+class Game : public olc::PixelGameEngine
 {
 private:
-	
-    static const int _WordX = 10; /// Tamño de mi mapa eje x 
+
+	static const int _WordX = 10; /// Tamño de mi mapa eje x 
 	static const int _WordY = 10; /// Tamño de mi mapa eje y
 
 	/// olc::vi2d Son Vectores de 2 dimensiones con su x , y.
-	olc::vi2d vWorldSize = { 10,10  };/// MAPA principal ... jugador humano.
+	olc::vi2d vWorldSize = { 10,10 };/// MAPA principal ... jugador humano.
 	olc::vi2d vWorldWarSize = { _WordX , _WordY };/// MAPA segundario ... para jugador maquina por ahora...
 
 	olc::vi2d isoTileSize = { 40 , 20 }; /// Tamaño en pixeles de cada una de mis Tiles isometricos.
@@ -25,48 +25,71 @@ private:
 	/// Puntero que va a contener mis sprite a dibujar en consola.
 	olc::Sprite* isoPng = nullptr;
 	/// Supongo que voy a tener uno para cada barco y un contador para ir diferenciandolos.
-	
-	
+
+
 	HumanPlayer  p1;
+	HumanPlayer  p2;
 	std::string name = "Facu";
+	std::string name2 = "Martin";
+	std::string Ganador;
+	
 	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
-	int cntBarco = 0;
 	
+	int cntBarco = 0; /// contador de barcos en mapa. graficos
+	int cntBarco2 = 0;
+
 	/// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
 public:
 
-	
+
 	Game()
 	{
 		sAppName = "Game";
 	}
-	
-		
-		
+
+	bool Winner(HumanPlayer& p1, HumanPlayer& p2)
+	{
+		bool Winner;
+
+		if (!p1.TieneFlota)
+		{
+			Ganador = "Ganador: " + p2.name;
+		}
+		else
+		{
+			Ganador = "Ganador: " + p1.name;
+		}
+			
+
+		return Winner;
+	}
+
+
 	bool OnUserCreate() override
 	{
 		/// Cargo la direecion de mis sprites.
 		isoPng = new olc::Sprite("assets/isodemo.png");
 		p1.pHumanPlayer(name);
+		p2.pHumanPlayer(name2);
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
-	
+
 		/// Un for para ir cambiando de eventos.
 		for (int i = 0; i < 10; i++)
 			listEvents.push_back("");
-		
+
 		return true;
 	}
-	
 
-	bool OnUserUpdate(float FpsTime) override 
+
+	bool OnUserUpdate(float FpsTime) override
 	{
-		
+
 		// Pantalla completa en blanco.
 		olc::PixelGameEngine::Clear(olc::WHITE);
 		// Creo unas "Cordenadas" de mouse.
@@ -99,9 +122,10 @@ public:
 			(vCell.y - vWarOrigen.y) - (vCell.x - vWarOrigen.x)
 		};
 
-		int nLog = 0; /// variable de control textos flotantes.
-		int Hori = 1; /// variable de 
-		int vert = 1;
+		int nLog = 0; /// Variable de control textos flotantes.
+		int Hori = 1; /// Variable de control poss.
+		int vert = 1; /// Variable de control poss.
+		bool IsRunnig = true; /// Variable de juego en funcionamiento.
 		
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
@@ -199,10 +223,13 @@ public:
 		for (auto& s : listEvents)
 		{
 			// 8 + 20  Separacion entre textos        /// los 3 * 16
-			DrawString(400, nLog * 8 - 8, s, olc::Pixel(nLog * -17, nLog * -17, nLog * -17));
+			DrawString(350, nLog * 8 - 8, s, olc::Pixel(nLog * -17, nLog * -17, nLog * -17));
 			nLog++;
 		}
-
+		
+		bool Map_crtlvar = vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y;
+		bool Mapwar_crtlvar = vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y;
+		
 		//////////////////////////////// FIN PRIMITIVAS DEL JUEGO ///////////////////////////////////////////////
 
 		/*Luego de dibujar las primitivas del mapa entra el jugador y bot con sus methodos*/
@@ -217,15 +244,22 @@ public:
 			p1.piezas[cntBarco].setOrientation();
 		}
 
-		if (GetKey(olc::Key::E).bPressed)
+		if (GetKey(olc::Key::E).bPressed) /// Solo para debugiar
 		{
 			SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::WHITE);
 			vWarOrigen = { 16, 1 };
 			system("cls");
-			p1.A.mostrarMapa();
+			p2.MAPA.mostrarMapa();
 		}
-
+		if (GetKey(olc::Key::A).bPressed)
+		{
+			if (p2.MAPA.grid[vSelected2.x][vSelected2.y].isShot)
+				std::cout << "Me gusta la macoña" << std::endl;
+			else
+				std::cout << "No me gusta la macoña" << std::endl;
+		}
+		
 
 		// Dibuja el sombreado amaralli en cada tile que selecciono.
 		SetPixelMode(olc::Pixel::ALPHA);
@@ -237,17 +271,17 @@ public:
 		
 		if (GetMouse(0).bPressed)
 		{
-			if (p1.placeShips(vSelected.x,vSelected.y)){
+			if (p1.placeShips(vSelected.x, vSelected.y,cntBarco) && p2.placeShips(vSelected.x, vSelected.y,cntBarco2)) {
 				if (p1.piezas[cntBarco].getOrientation())
 					Hori = 10;
-	
-					
+				
 				switch (cntBarco)
 				{
 				case 0:
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
 					cntBarco++;
+					cntBarco2++;
 					break;
 
 				case 1:
@@ -255,6 +289,7 @@ public:
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
 					cntBarco++;
+					cntBarco2++;
 					break;
 
 				case 2:
@@ -262,6 +297,7 @@ public:
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
 					cntBarco++;
+					cntBarco2++;
 					break;
 
 				case 3:
@@ -270,6 +306,7 @@ public:
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
 					cntBarco++;
+					cntBarco2++;
 					break;
 				
 				case 4:
@@ -279,36 +316,46 @@ public:
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 4 * Hori] %= 2;
 					cntBarco++;
+					cntBarco2++;
 					break;
 
 				default:
-					AddEvent("TODOS LOS BARCOS EN MAPA");
-					AddEvent("Empieza fase Guerra!!!!");
 					break;
 				}
 
-			}else{
-			    
-				if ((vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y) 
-					&& pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
-					AddEvent("Estas sobre otro barco :c");
+			}
+			else {
 
-				else if(!(vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
-					&& !(vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y))
+				if (!Map_crtlvar && !Mapwar_crtlvar)
 					AddEvent("Fuera de los Mapas");
+				
+			    else if (cntBarco != 5)
+				{
+					if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
+						AddEvent("Estas sobre otro barco :c");
+					else if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
+						AddEvent("Lugar Invalido");
 
-				/// Falta mensaje de "Todos los barcos en mapa"
+				}
+				else
+				{ 
+					if (Mapwar_crtlvar && p2.MAPA.grid[vSelected2.x][vSelected2.y].isShot == false)
+					{
+						AddEvent(p1.disparar(vSelected2.x, vSelected2.y, p2.MAPA));
+						++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x];
+
+					}
+					else
+						AddEvent("Disparo invalido");
+					
+				}
+
+				
 			}
 			
 		}
 		/// Datos para el mapa 2
-		if (GetMouse(0).bPressed)
-		{
-			if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
-			{
-				
-			}
-		}
+		
 
 		// Doy la textura de seleccion para cada barco y el mundo
 		if (vMouse.x && vMouse.y != NULL) /// size del barquito y rotazion 
@@ -351,7 +398,11 @@ public:
 			}
 		}
 
-
+		
+		if (GetKey(olc::Key::ESCAPE).bPressed)
+		{
+		  IsRunnig = false;
+		}
 
 		///////////////// DIBUJO DATOS AL MAPA /////////////////////////////////////////////////////////////////
 
@@ -359,17 +410,17 @@ public:
 
 		// Go back to normal drawing with no expected transparency
 		SetPixelMode(olc::Pixel::NORMAL);
-
+		
 		// Draw Debug Info
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1.name+"]", olc::RED);
-
-		if (vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y)
+		
+		if (Map_crtlvar)
 		{
 			DrawString(4, 34, "Mapa[1] X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
 		}
-		else if (vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y)
+		else if (Mapwar_crtlvar)
 		{
 			DrawString(4, 34, "Mapa[2] X: " + std::to_string(vSelected2.x) + ",Y: " + std::to_string(vSelected2.y), olc::BLACK);
 		}
@@ -377,13 +428,20 @@ public:
 			DrawString(4, 34, "Mapa [1]: Fuera del mapa ", olc::BLACK);
 			DrawString(4, 44, "Mapa [2]: Fuera del mapa ", olc::BLACK);
 		}
+		/////
 
+		/// mejorar este metodo 
+		/*if (Winner(p1, p2))
+		{
+			SetPixelMode(olc::Pixel::NORMAL);
+			Clear(olc::WHITE);
+			DrawString(4, 34, Ganador , olc::BLACK,5);
+		}else{
+			SetPixelMode(olc::Pixel::NORMAL);
+			Clear(olc::WHITE);
+			DrawString(4, 34, Ganador , olc::BLACK,10);
+		}*/
 
-		return true;
+		return IsRunnig;
 	}
-
-	                                     
-	
-	void Exit(); /// Metodo para salir del juego pulsando una tecla.
-
 };

@@ -11,8 +11,13 @@ Barco::Barco() {
 	hits = 0;
 }
 
-bool Barco::Hundido() {
-	return size == hits;
+Barco Barco::hundido(Barco& barquito) {
+	
+	if (barquito.getSize() == barquito.hits) {
+		barquito.isSunk = true;
+	}
+
+	return barquito;
 }
 
 void Barco::setSize(int size)
