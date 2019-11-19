@@ -29,7 +29,7 @@ private:
 
 	HumanPlayer  p1;
 	HumanPlayer  p2;
-	std::string name = "Facu";
+	std::string name = "Facundo";
 	std::string name2 = "Martin";
 	std::string Ganador;
 	
