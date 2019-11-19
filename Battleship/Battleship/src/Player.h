@@ -4,6 +4,7 @@
 class Player
 {
 public:
+	Mapa board;
 	std::string name;
 	Barco piezas[5];
 	bool hasFleet;
