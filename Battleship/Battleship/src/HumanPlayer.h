@@ -11,7 +11,7 @@ public:
 	void pHumanPlayer(const std::string& name);
 	std::string disparar(int& x, int& y,Mapa& Mapa_enemigo) override;
 	bool placeShips(int& x, int& y, int i) override;
-
+	bool revisarFlota();
 	Mapa MAPA;
 private:
 	 /// Mapa del jugador

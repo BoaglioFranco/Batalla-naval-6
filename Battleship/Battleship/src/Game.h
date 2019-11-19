@@ -51,22 +51,31 @@ public:
 		sAppName = "Game";
 	}
 
-	bool Winner(HumanPlayer& p1, HumanPlayer& p2)
+	void Winner(HumanPlayer& p1, HumanPlayer& p2)
 	{
 		bool Winner;
 
-		if (!p1.TieneFlota)
+		if (p1.revisarFlota() == false)
 		{
 			Ganador = "Ganador: " + p2.name;
+
+			SetPixelMode(olc::Pixel::NORMAL);
+			Clear(olc::WHITE);
+			DrawString(4, 34, Ganador, olc::BLACK, 5);
 		}
-		else
+		else if(p2.revisarFlota() == false)
 		{
 			Ganador = "Ganador: " + p1.name;
-		}
-			
 
-		return Winner;
+			SetPixelMode(olc::Pixel::NORMAL);
+			Clear(olc::WHITE);
+			DrawString(4, 34, Ganador, olc::BLACK, 5);
+		}
+
+		
+
 	}
+
 
 
 	bool OnUserCreate() override
@@ -242,6 +251,7 @@ public:
 		if (GetKey(olc::Key::R).bPressed)
 		{
 			p1.piezas[cntBarco].setOrientation();
+			p2.piezas[cntBarco2].setOrientation();
 		}
 
 		if (GetKey(olc::Key::E).bPressed) /// Solo para debugiar
@@ -431,17 +441,13 @@ public:
 		/////
 
 		/// mejorar este metodo 
-		/*if (Winner(p1, p2))
-		{
-			SetPixelMode(olc::Pixel::NORMAL);
-			Clear(olc::WHITE);
-			DrawString(4, 34, Ganador , olc::BLACK,5);
-		}else{
-			SetPixelMode(olc::Pixel::NORMAL);
-			Clear(olc::WHITE);
-			DrawString(4, 34, Ganador , olc::BLACK,10);
-		}*/
+
+		Winner(p1, p2);
+
 
 		return IsRunnig;
 	}
+
+
+
 };

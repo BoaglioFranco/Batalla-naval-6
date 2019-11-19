@@ -19,9 +19,9 @@ public:
 	bool getOrientation();
 	void setOrientation();
 	
-	Barco hundido(Barco& barquito);
+	bool hundido();
 	
-	
+
 	void setSize(int size);
 	int getSize();
 	

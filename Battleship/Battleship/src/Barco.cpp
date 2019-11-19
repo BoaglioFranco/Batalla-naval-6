@@ -11,13 +11,13 @@ Barco::Barco() {
 	hits = 0;
 }
 
-Barco Barco::hundido(Barco& barquito) {
+bool Barco::hundido() {
 	
-	if (barquito.getSize() == barquito.hits) {
-		barquito.isSunk = true;
+	if (size == hits) {
+		isSunk = true;
 	}
 
-	return barquito;
+	return isSunk;
 }
 
 void Barco::setSize(int size)
@@ -43,3 +43,5 @@ void Barco::setOrientation()
 {
 	isVertical = !isVertical;
 }
+
+
