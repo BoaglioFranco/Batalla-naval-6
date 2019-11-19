@@ -30,7 +30,7 @@
     <ClCompile Include="src\Celda.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Battleship\src\ComputerPlayer.cpp">
+    <ClCompile Include="src\ComputerPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="src\Celda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Battleship\src\ComputerPlayer.h">
+    <ClInclude Include="src\ComputerPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
