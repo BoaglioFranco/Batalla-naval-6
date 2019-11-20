@@ -171,9 +171,8 @@
     <ClInclude Include="src\Player.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\iso.png" />
-    <Image Include="assets\isodem.png" />
-    <Image Include="assets\isodemo.png" />
+    <Image Include="assets\iso1.png" />
+    <Image Include="assets\iso2.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Barco.txt" />
