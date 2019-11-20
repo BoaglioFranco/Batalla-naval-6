@@ -1,7 +1,7 @@
 #include "ComputerPlayer.h"
 
 ComputerPlayer::ComputerPlayer() {
-	this->name = "Baby Face";
+	this->name = "Higuain";
 
 
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
