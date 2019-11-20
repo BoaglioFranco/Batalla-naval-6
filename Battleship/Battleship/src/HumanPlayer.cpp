@@ -19,17 +19,18 @@
 	archivoBarcos.close();
 }
 
- bool HumanPlayer::placeShips(int& x, int& y, int i) {
-
+ bool HumanPlayer::placeShips(int& x, int& y) {
+	 static int i = 0;
 	 bool ace;
 
-	 if (MAPA.insertShip(x, y, piezas[i]) && i < 5)
+	 if (board.insertShip(x, y, piezas[i]) && i < 5)
 	 {
 		   std::cout << "Player " + name + " inserto el barco -> " + piezas[i].name << std::endl;
 		   std::cout << "Se coloco en mapa el Barco: " << piezas[i].name
 			 << "\n tamaño: " << piezas[i].getSize() << "\n"
 			 << "------------------------------------------" << std::endl;
 		 ace = true;
+		 i++;
 	 }
 	 else {
 		 ace = false;
@@ -39,17 +40,16 @@
  }
 
 
-std::string HumanPlayer::disparar(int& x, int& y,Mapa& Mapa_enemigo) {
+Barco * HumanPlayer::disparar(int& x, int& y,Mapa& Mapa_enemigo) {
 	
-	std::string disparo;
-	
+	Barco * barquito = nullptr;
+
 	if(Mapa_enemigo.RegistrarDisparo(x, y))
 	{
-		disparo = "Disparo en X["+ std::to_string(x) +"]"+"Y["+std::to_string(y)+"]"; /// harcodeo duro e inesperado
+		barquito = Mapa_enemigo.grid[x][y].miembroDe;
 	}
 	
-
-	return disparo;
+	return barquito;
 }
 
 

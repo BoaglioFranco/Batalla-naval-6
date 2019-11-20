@@ -55,25 +55,25 @@ bool ComputerPlayer::isValidPosition(int x, int y, Barco& ship) {
 
 }
 
-bool ComputerPlayer::placeShips(int& x, int& y, int i) {
+bool ComputerPlayer::placeShips(int& x, int& y) {
 	srand(time(0)); //setea seed para el random
-	for (i = 0; i < 5; i++) {
+	for (static int i = 0; i < 5; i++) {
 		do {
 			x = rand() % 10;
 			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
 			
 		} while (!board.insertShip(x, y, piezas[i]));
 	}
+
 	return 1;
 }
 
-std::string ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
+Barco * ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 
 	std::string disparo;
 	srand(time(0));
 	x = rand() % 10;
 	y = rand() % 10; //Dispara random
-
 
 
 	if (Mapa_enemigo.RegistrarDisparo(x, y))
@@ -82,4 +82,24 @@ std::string ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	}
 
 
-	return disparo;
+	return NULL;
+}
+
+bool ComputerPlayer::revisarFlota()
+{
+	int i = 0;
+	int flag = 0;
+
+	while (i < 5 && flag == 0)
+	{
+		if (piezas[i].hundido())
+			i++;
+		else
+			flag = 1;
+	}
+
+	if (flag == 0)
+		this->TieneFlota = false;
+
+	return this->TieneFlota;
+}

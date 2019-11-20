@@ -7,10 +7,9 @@ class HumanPlayer :
 	public Player
 {
 public:
-	HumanPlayer() {};
-	void pHumanPlayer(const std::string& name);
-	std::string disparar(int& x, int& y,Mapa& Mapa_enemigo) override;
-	bool placeShips(int& x, int& y, int i) override;
+	HumanPlayer(const std::string& name);
+	Barco * disparar(int& x, int& y,Mapa& Mapa_enemigo) override;
+	bool placeShips(int& x, int& y) override;
 	bool revisarFlota();
 	//Mapa MAPA; // herencia, pelotudo
 private:
