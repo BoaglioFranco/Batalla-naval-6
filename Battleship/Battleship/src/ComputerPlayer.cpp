@@ -61,6 +61,8 @@ bool ComputerPlayer::placeShips(int& x, int& y) {
 		do {
 			x = rand() % 10;
 			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
+			if(rand() % 2)
+				piezas[i].setOrientation();
 			
 		} while (!board.insertShip(x, y, piezas[i]));
 	}

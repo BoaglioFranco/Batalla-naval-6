@@ -1,10 +1,7 @@
-﻿  Celda.cpp
-  ComputerPlayer.cpp
-C:\Users\Carlos Cordoba\source\repos\Batalla-naval-6\Battleship\Battleship\src\ComputerPlayer.cpp(59,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+﻿  ComputerPlayer.cpp
+C:\Users\franc\source\repos\BoaglioFranco\Batalla-naval-6\Battleship\Battleship\src\ComputerPlayer.cpp(59,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   HumanPlayer.cpp
-  Barco.cpp
-  Battleship.cpp
   Mapa.cpp
   Generating Code...
-C:\Users\Carlos Cordoba\source\repos\Batalla-naval-6\Battleship\Battleship\src\ComputerPlayer.cpp(74,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Battleship.vcxproj -> C:\Users\Carlos Cordoba\source\repos\Batalla-naval-6\Battleship\x64\Debug\Battleship.exe
+C:\Users\franc\source\repos\BoaglioFranco\Batalla-naval-6\Battleship\Battleship\src\ComputerPlayer.cpp(76,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Battleship.vcxproj -> C:\Users\franc\Source\Repos\BoaglioFranco\Batalla-naval-6\Battleship\x64\Debug\Battleship.exe
