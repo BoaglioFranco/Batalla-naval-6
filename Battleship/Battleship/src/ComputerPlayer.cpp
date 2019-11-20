@@ -77,9 +77,6 @@ Barco * ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 		x = rand() % 10;
 		y = rand() % 10; //Dispara random
 	} while(Mapa_enemigo.grid[x][y].isShot);
-	{
-
-	}
 
 	Barco* barcoDisparado = nullptr;
 	if (Mapa_enemigo.RegistrarDisparo(x, y))

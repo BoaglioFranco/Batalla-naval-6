@@ -30,6 +30,9 @@
     <ClCompile Include="src\Celda.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ComputerPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -53,9 +56,18 @@
     <ClInclude Include="src\Celda.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ComputerPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\isodemo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\iso.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\isodem.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -19,7 +19,7 @@ private:
 
 	olc::vi2d isoTileSize = { 40 , 20 }; /// Tamaño en pixeles de cada una de mis Tiles isometricos.
 
-	olc::vi2d vWorldOrigen = { 5 , 1 };/// Donde quiero que comience mi mapa en pantalla.
+	olc::vi2d vWorldOrigen = { 5 , 3 };/// Donde quiero que comience mi mapa en pantalla.
 	olc::vi2d vWarOrigen = { 30 , 30 };
 
 	/// Puntero que va a contener mis sprite a dibujar en consola.
@@ -28,6 +28,7 @@ private:
 	HumanPlayer * p1 = new HumanPlayer("facundo");
 	ComputerPlayer * p2 = new ComputerPlayer;
 	Barco* Reg_shot = nullptr;
+	Barco* Reg_shotIA = nullptr;
 	std::string Ganador;
 	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
 	int* pWorld = nullptr;
@@ -82,7 +83,7 @@ public:
 	bool OnUserCreate() override
 	{
 		/// Cargo la direecion de mis sprites.
-		isoPng = new olc::Sprite("assets/isodemo.png");
+		isoPng = new olc::Sprite("assets/isodem.png");
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
@@ -96,9 +97,10 @@ public:
 
 	bool OnUserUpdate(float FpsTime) override
 	{
-		
+
 		// Pantalla completa en blanco.
 		olc::PixelGameEngine::Clear(olc::WHITE);
+		Clear(olc::VERY_DARK_CYAN);
 		// Creo unas "Cordenadas" de mouse.
 		olc::vi2d vMouse = { GetMouseX(), GetMouseY() };
 		// Creo un array 2D que va referenciar a una "celda" en mi mapa.
@@ -133,7 +135,7 @@ public:
 		int Hori = 1; /// Variable de control poss.
 		int vert = 1; /// Variable de control poss.
 		bool IsRunnig = true; /// Variable de juego en funcionamiento.
-		
+
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
 		else if (col == olc::BLUE) vSelected += {+0, -1};
@@ -141,11 +143,11 @@ public:
 		else if (col == olc::YELLOW) vSelected += {+1, +0};
 
 		/// Lo mismo pero para el mapa 2 ( ͡° ͜ʖ ͡° )
-	    if (col == olc::RED) vSelected2 += {-1, +0};
+		if (col == olc::RED) vSelected2 += {-1, +0};
 		else if (col == olc::BLUE) vSelected2 += {+0, -1};
 		else if (col == olc::GREEN) vSelected2 += {+0, +1};
 		else if (col == olc::YELLOW) vSelected2 += {+1, +0};
-		
+
 		// Funcion Lambda para convertir "world" en cordenadas para la pantalla.
 		auto ToScreen = [&](int x, int y)
 		{
@@ -165,12 +167,10 @@ public:
 				(vWarOrigen.y * isoTileSize.y) + (x + y) * (isoTileSize.y / 2)
 			};
 		};
-
-		
 		// Da trasparencia al mundo.
 		SetPixelMode(olc::Pixel::MASK);
+		
 
-	    
 
 		/// Mundo [1]
 		/// (0,0) es mi tope , dibujo desde el tope hasta el final para
@@ -179,7 +179,7 @@ public:
 		{
 			for (int x = 0; x < vWorldSize.x; x++)
 			{
-				
+
 				/// Convierte las celdas a cordenadas del mundo.
 				olc::vi2d vWorld = ToScreen(x, y);
 
@@ -187,11 +187,17 @@ public:
 				{
 				case 0:
 					// Ocean Tile
-					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x * 2, isoTileSize.y * 2);
-					break;
-				case 1:
-					// Grass visible Tile
 					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+					break;
+				case 1: // barquito
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+				case 2: // celda roja
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+				case 3:
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
 				}
 			}
 		}
@@ -203,7 +209,7 @@ public:
 		{
 			for (int x = 0; x < vWorldWarSize.x; x++)
 			{
-				olc::vi2d vWorld2 = ToScreen2(x, y); 
+				olc::vi2d vWorld2 = ToScreen2(x, y);
 
 				switch (pWarWorld[y * vWorldWarSize.x + x])
 				{
@@ -214,6 +220,14 @@ public:
 				case 1:
 					// Grass visible Tile
 					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				case 5:
 					break;
 				}
 
@@ -226,17 +240,17 @@ public:
 			listEvents.push_back(s);
 			listEvents.pop_front();
 		};
-		
+
 		for (auto& s : listEvents)
 		{
 			// 8 + 20  Separacion entre textos        /// los 3 * 16
 			DrawString(350, nLog * 8 - 8, s, olc::Pixel(nLog * -17, nLog * -17, nLog * -17));
 			nLog++;
 		}
-		
+
 		bool Map_crtlvar = vSelected.x >= 0 && vSelected.x < vWorldSize.x && vSelected.y >= 0 && vSelected.y < vWorldSize.y;
 		bool Mapwar_crtlvar = vSelected2.x >= 0 && vSelected2.x < vWorldWarSize.x && vSelected2.y >= 0 && vSelected2.y < vWorldWarSize.y;
-		
+
 		//////////////////////////////// FIN PRIMITIVAS DEL JUEGO ///////////////////////////////////////////////
 
 		/*Luego de dibujar las primitivas del mapa entra el jugador y bot con sus methodos*/
@@ -250,36 +264,38 @@ public:
 		{
 			p1->piezas[cntBarco].setOrientation();
 		}
-	
+
 		if (GetKey(olc::Key::E).bPressed) /// Solo para debugiar
 		{
 			SetPixelMode(olc::Pixel::NORMAL);
-			Clear(olc::WHITE);
-			vWarOrigen = { 16, 1 };
+			Clear(olc::VERY_DARK_CYAN);
+			vWarOrigen = { 16, 3 };
 			system("cls");
 			p2->board.mostrarMapa();
+			p2->placeShips(vSelected.x, vSelected.y);
 		}
 		if (GetKey(olc::Key::A).bPressed)
 		{
 			system("cls");
 			p1->board.mostrarMapa();
 		}
-		
 
+		
 		// Dibuja el sombreado amaralli en cada tile que selecciono.
 		SetPixelMode(olc::Pixel::ALPHA);
 
 		/// Convierto las cordenadas a espacio "real" en el mundo.
 		olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
-		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y); 
+		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y);
 
-		
+
 		if (GetMouse(0).bPressed)
 		{
 			if (p1->placeShips(vSelected.x, vSelected.y)) {
+
 				if (p1->piezas[cntBarco].getOrientation())
 					Hori = 10;
-				
+
 				switch (cntBarco)
 				{
 				case 0:
@@ -309,7 +325,7 @@ public:
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
 					cntBarco++;
 					break;
-				
+
 				case 4:
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
 					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
@@ -322,60 +338,55 @@ public:
 				default:
 					break;
 				}
-
-
-
 			}
 			else {
 
+				/// Si se hace click fuera del mapa se printea el mensaje
 				if (!Map_crtlvar && !Mapwar_crtlvar)
 					AddEvent("Fuera de los Mapas");
-				
-			    if (cntBarco != 5)
+
+				/// Si no todos los barcos estan en el mapa solo pueden existir 2 tipos de errores
+				if (cntBarco != 5)
 				{
 					if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
-						AddEvent("Estas sobre otro barco :c");
+						AddEvent("Estas sobre otro barco :c"); /// Estas sobre otro barco
 					else if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
-						AddEvent("Lugar Invalido");
+						AddEvent("Lugar Invalido"); /// Estas en un lugar invalido para colocar
 				}
-				else
-				{ 
-					p2->placeShips(vSelected.x, vSelected.y);
-
+				else /// Todos tus barcos y los de la IA estan en mapa // Empiza el juego //.
+				{
 					if (Mapwar_crtlvar && p2->board.grid[vSelected2.x][vSelected2.y].isShot == false)
 					{
-					
+						/// Disparo del jugador Humano
 						Reg_shot = p1->disparar(vSelected2.x, vSelected2.y, p2->board);
 						AddEvent("disparo en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
+						++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x];
 
 						if (Reg_shot)
 						{
-							AddEvent("le diste a un barco");
-							if (Reg_shot->hundido())
+							AddEvent("Le diste a un barco"); /// Si le das a un Barco
+							if (Reg_shot->hundido()) /// Se fija si fue hundido
 							{
-								AddEvent("Hundiste el Barco enemigo: " + Reg_shot->name);
+								AddEvent("Barco enemigo-[" + Reg_shot->name + "]-Hundido"); /// Te dice que barco fue hundido
 							}
 						}
-						++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x];
-						
-						Barco * hola = p2->disparar(vSelected2.x, vSelected2.y, p1->board);
+
+						//// Disparo de la IA // si dispara 2 veces al mismo lugar causa un bug grafico, es solucionable pero si la IA funciona 
+						//// Jamas volveria a disparar en el mismo lugar
+						Reg_shotIA = p2->disparar(vSelected2.x, vSelected2.y, p1->board);
 						AddEvent("LA IA disparo en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
-						
-						if (hola)
+
+						if (Reg_shotIA)
 						{
 							AddEvent("LA IA le pego a tu barco");
 						}
+						pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] += 2;
 					}
 					else
 						AddEvent("Disparo invalido");
-					
 				}
-
-				
 			}
-			
 		}
-		/// Datos para el mapa 2
 		
 
 		// Doy la textura de seleccion para cada barco y el mundo
@@ -428,14 +439,17 @@ public:
 		///////////////// DIBUJO DATOS AL MAPA /////////////////////////////////////////////////////////////////
 
 
-
+		
 		// Go back to normal drawing with no expected transparency
 		SetPixelMode(olc::Pixel::NORMAL);
-		
+
 		// Draw Debug Info
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1->name+"]", olc::RED);
+		DrawString(500, 4, "-----------------",olc::WHITE);
+		DrawString(500, 14,"Enemigo IA ->["+p2->name+"]",olc::RED);
+		DrawString(500, 24,"-----------------",olc::WHITE);
 		
 		if (Map_crtlvar)
 		{
@@ -451,7 +465,6 @@ public:
 		} 
 
 		Winner(p1, p2);
-		
 
 		return IsRunnig;
 	}

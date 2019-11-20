@@ -7,10 +7,8 @@ int main()
 	Game * demo = nullptr;
 	demo = new Game;
 
-	if (demo->Construct(900, 300, 2, 2,true))
+	if (demo->Construct(900, 300, 2, 2))
 		demo->Start();
-	
-	system("cls");
 	
 	std::cout << "\t\t----------------------------------" << std::endl;
 	std::cout << "\t\t.-.-.Muchas gracias Por Jugar.-.-." << std::endl;
