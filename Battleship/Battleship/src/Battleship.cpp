@@ -7,7 +7,7 @@ int main()
 	Game * demo = nullptr;
 	demo = new Game;
 
-	if (demo->Construct(900, 300, 2, 2,true))
+	if (demo->Construct(900, 300, 2, 2))
 		demo->Start();
 	
 	std::cout << "\t\t----------------------------------" << std::endl;

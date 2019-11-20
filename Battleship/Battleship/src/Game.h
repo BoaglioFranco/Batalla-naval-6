@@ -83,7 +83,7 @@ public:
 	bool OnUserCreate() override
 	{
 		/// Cargo la direecion de mis sprites.
-		isoPng = new olc::Sprite("assets/isodemo.png");
+		isoPng = new olc::Sprite("assets/isodem.png");
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
@@ -187,13 +187,16 @@ public:
 				{
 				case 0:
 					// Ocean Tile
-					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
-					break;
-				case 1:
 					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
-				case 2:
-					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 1 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+				case 1: // barquito
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+				case 2: // celda roja
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+				case 3:
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
 				}
 			}
@@ -266,7 +269,7 @@ public:
 		{
 			SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::VERY_DARK_CYAN);
-			vWarOrigen = { 16, 1 };
+			vWarOrigen = { 16, 3 };
 			system("cls");
 			p2->board.mostrarMapa();
 			p2->placeShips(vSelected.x, vSelected.y);
@@ -377,7 +380,7 @@ public:
 						{
 							AddEvent("LA IA le pego a tu barco");
 						}
-						++pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x];
+						pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] += 2;
 					}
 					else
 						AddEvent("Disparo invalido");
@@ -444,6 +447,9 @@ public:
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1->name+"]", olc::RED);
+		DrawString(500, 4, "-----------------",olc::WHITE);
+		DrawString(500, 14,"Enemigo IA ->["+p2->name+"]",olc::RED);
+		DrawString(500, 24,"-----------------",olc::WHITE);
 		
 		if (Map_crtlvar)
 		{
