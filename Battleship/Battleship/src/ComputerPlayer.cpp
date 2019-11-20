@@ -61,6 +61,8 @@ bool ComputerPlayer::placeShips(int& x, int& y) {
 		do {
 			x = rand() % 10;
 			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
+			if(rand() % 2)
+				piezas[i].setOrientation();
 			
 		} while (!board.insertShip(x, y, piezas[i]));
 	}
@@ -70,19 +72,23 @@ bool ComputerPlayer::placeShips(int& x, int& y) {
 
 Barco * ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 
-	std::string disparo;
 	srand(time(0));
-	x = rand() % 10;
-	y = rand() % 10; //Dispara random
+	do {
+		x = rand() % 10;
+		y = rand() % 10; //Dispara random
+	} while(Mapa_enemigo.grid[x][y].isShot);
+	{
 
+	}
 
+	Barco* barcoDisparado = nullptr;
 	if (Mapa_enemigo.RegistrarDisparo(x, y))
 	{
-		disparo = "Disparo en X[" + std::to_string(x) + "]" + "Y[" + std::to_string(y) + "]"; /// harcodeo duro e inesperado
+		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
 	}
 
 
-	return NULL;
+	return barcoDisparado;
 }
 
 bool ComputerPlayer::revisarFlota()
