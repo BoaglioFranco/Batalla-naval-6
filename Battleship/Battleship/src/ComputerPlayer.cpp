@@ -21,39 +21,6 @@ ComputerPlayer::ComputerPlayer() {
 
 }
 
-bool ComputerPlayer::isValidPosition(int x, int y, Barco& ship) {
-	bool isvalidPlacement = false;
-	bool isvalidX;
-	bool isvalidY;
-	bool vertical = ship.getOrientation();
-
-	int i = x, j = y;
-	///Existen 2 orientaciones vertial (1) y horizontal(0)
-
-	if (vertical) {
-		isvalidX = (0 <= x && x < 10);//evalua que la coordenada X este dentro del rango.
-		isvalidY = (0 <= y && (y - 1 + ship.getSize()) < 10);//evalua que el largo del barco desde el punto de origen este en rango
-
-		isvalidPlacement = isvalidX && isvalidY;
-
-		for (j = y; j < (y + ship.getSize()) && isvalidPlacement; j++) {//Evalua las casillas donde se encontraria el barco
-			isvalidPlacement = (heatMap[i][j] == 0);//Y checkea que no haya otro barco.
-		}
-	}
-	else {
-		isvalidX = (0 <= x && x - 1 + ship.getSize() < 10);
-		isvalidY = (0 <= y && y < 10);
-
-		isvalidPlacement = isvalidX && isvalidY;
-
-		for (i = x; i < (x + ship.getSize()) && isvalidPlacement; i++) {
-			isvalidPlacement = (heatMap[i][j] == 0);
-		}
-	}
-
-	return isvalidPlacement;
-
-}
 
 bool ComputerPlayer::placeShips(int& x, int& y) {
 	srand(time(0)); //setea seed para el random
