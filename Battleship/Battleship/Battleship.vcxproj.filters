@@ -61,13 +61,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\isodemo.png">
+    <Image Include="assets\iso2.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="assets\iso.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\isodem.png">
+    <Image Include="assets\iso1.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

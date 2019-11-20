@@ -24,7 +24,8 @@ private:
 
 	/// Puntero que va a contener mis sprite a dibujar en consola.
 	olc::Sprite* isoPng = nullptr;
-	/// Supongo que voy a tener uno para cada barco y un contador para ir diferenciandolos.
+	olc::Sprite* isoPng2 = nullptr;
+	
 	HumanPlayer * p1 = new HumanPlayer("facundo");
 	ComputerPlayer * p2 = new ComputerPlayer;
 	Barco* Reg_shot = nullptr;
@@ -35,7 +36,7 @@ private:
 	int* pWarWorld = nullptr;
 	
 	int cntBarco = 0; /// contador de barcos en mapa. graficos
-
+	int IA_shot = 0;
 	/// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
@@ -83,12 +84,13 @@ public:
 	bool OnUserCreate() override
 	{
 		/// Cargo la direecion de mis sprites.
-		isoPng = new olc::Sprite("assets/isodem.png");
+		isoPng = new olc::Sprite("assets/iso1.png"); // 3
+		isoPng2 = new olc::Sprite("assets/iso2.png");
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
 		/// Un for para ir cambiando de eventos.
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 15; i++)
 			listEvents.push_back("");
 
 		return true;
@@ -189,15 +191,26 @@ public:
 					// Ocean Tile
 					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
-				case 1: // barquito
-					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+				case 1: // Flota de 2
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 2 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
 				case 2: // celda roja
 					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
-				case 3:
-					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+				case 3: // Flota de 3
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng2, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
+				case 4: // Segunda flota de 3
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng2, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					
+					break;
+				case 5: // flota de 4
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 1 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+				case 6: // flota de 5
+					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+
 				}
 			}
 		}
@@ -214,20 +227,16 @@ public:
 				switch (pWarWorld[y * vWorldWarSize.x + x])
 				{
 				case 0:
-					// Invisble Tile                               
+					// Mapa sin descubrir.                              
 					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 1 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				case 1:
-					// Grass visible Tile
+					// Hit Agua
 					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				case 2:
-					break;
-				case 3:
-					break;
-				case 4:
-					break;
-				case 5:
+					// Hit Barco                             
+					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 0 * isoTileSize.x, 1, isoTileSize.x, isoTileSize.y);
 					break;
 				}
 
@@ -243,8 +252,8 @@ public:
 
 		for (auto& s : listEvents)
 		{
-			// 8 + 20  Separacion entre textos        /// los 3 * 16
-			DrawString(350, nLog * 8 - 8, s, olc::Pixel(nLog * -17, nLog * -17, nLog * -17));
+			// 8 + 20  Separacion entre textos olc::Pixel(nLog * -17, nLog * -17, nLog * -17)        /// los 3 * 16 
+			DrawString(350, nLog * 8 - 8, s, olc::Pixel(nLog * 18, nLog * 18, nLog * 18));
 			nLog++;
 		}
 
@@ -298,40 +307,40 @@ public:
 
 				switch (cntBarco)
 				{
-				case 0:
-					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
+				case 0: /// Barco de 2
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] = 1;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] = 1;
 					cntBarco++;
 					break;
 
-				case 1:
-					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
+				case 1: /// barco de 3
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] = 3;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] = 3;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] = 3;
 					cntBarco++;
 					break;
 
-				case 2:
-					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
+				case 2: ///Segundo barco de 3
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] = 4;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] = 4;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] = 4;
 					cntBarco++;
 					break;
 
-				case 3:
-					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
+				case 3: /// barco de 4
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] = 5;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] = 5;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] = 5;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] = 5;
 					cntBarco++;
 					break;
 
-				case 4:
-					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] %= 2;
-					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 4 * Hori] %= 2;
+				case 4: /// barco de 5
+					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] = 6;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 1 * Hori] = 6;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 2 * Hori] = 6;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 3 * Hori] = 6;
+					++pWorld[(vSelected.y * vWorldSize.x + vSelected.x) + 4 * Hori] = 6;
 					cntBarco++;
 					break;
 
@@ -348,9 +357,7 @@ public:
 				/// Si no todos los barcos estan en el mapa solo pueden existir 2 tipos de errores
 				if (cntBarco != 5)
 				{
-					if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
-						AddEvent("Estas sobre otro barco :c"); /// Estas sobre otro barco
-					else if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] == 1)
+					if (Map_crtlvar && pWorld[vSelected.y * vWorldSize.x + vSelected.x] != 0)
 						AddEvent("Lugar Invalido"); /// Estas en un lugar invalido para colocar
 				}
 				else /// Todos tus barcos y los de la IA estan en mapa // Empiza el juego //.
@@ -359,31 +366,47 @@ public:
 					{
 						/// Disparo del jugador Humano
 						Reg_shot = p1->disparar(vSelected2.x, vSelected2.y, p2->board);
-						AddEvent("disparo en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
-						++pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x];
+						AddEvent(" ");
+						AddEvent("> Disparaste en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
 
-						if (Reg_shot)
+						if (Reg_shot == nullptr)
 						{
-							AddEvent("Le diste a un barco"); /// Si le das a un Barco
+							AddEvent("> --[AGUA]--");
+							pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 1;
+						}
+						else {
+							
+							AddEvent("> Le diste a un Barco"); /// Si le das a un Barco
 							if (Reg_shot->hundido()) /// Se fija si fue hundido
 							{
-								AddEvent("Barco enemigo-[" + Reg_shot->name + "]-Hundido"); /// Te dice que barco fue hundido
+								AddEvent("> Flota enemiga-[" + Reg_shot->name + "]-Hundida"); /// Te dice que barco fue hundido
 							}
+							pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 2;
 						}
 
 						//// Disparo de la IA // si dispara 2 veces al mismo lugar causa un bug grafico, es solucionable pero si la IA funciona 
 						//// Jamas volveria a disparar en el mismo lugar
 						Reg_shotIA = p2->disparar(vSelected2.x, vSelected2.y, p1->board);
-						AddEvent("LA IA disparo en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
-
-						if (Reg_shotIA)
+						AddEvent("> LA IA disparo en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
+						IA_shot++;
+						if (Reg_shotIA == nullptr)
 						{
-							AddEvent("LA IA le pego a tu barco");
+							AddEvent("> --[IA - AGUA]--");
+							pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 2;
 						}
-						pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] += 2;
+						else
+						{
+							AddEvent("> LA IA le pego a tu Barco");
+							if (Reg_shotIA->hundido())
+							{
+								AddEvent("> La IA hundio tu Flota [" + Reg_shotIA->name + "]");
+							}
+							pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 2;
+						}
+						
 					}
 					else
-						AddEvent("Disparo invalido");
+						AddEvent("> --[Disparo invalido]---");
 				}
 			}
 		}
@@ -447,9 +470,10 @@ public:
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1->name+"]", olc::RED);
-		DrawString(500, 4, "-----------------",olc::WHITE);
-		DrawString(500, 14,"Enemigo IA ->["+p2->name+"]",olc::RED);
-		DrawString(500, 24,"-----------------",olc::WHITE);
+		DrawString(700, 2, "-----------------",olc::WHITE);
+		DrawString(700, 12,"Enemigo IA ->["+p2->name+"]",olc::RED);
+		DrawString(700, 22, "La IA disparo ->[" + std::to_string(IA_shot) + "]");
+		DrawString(700, 32,"-----------------",olc::WHITE);
 		
 		if (Map_crtlvar)
 		{
