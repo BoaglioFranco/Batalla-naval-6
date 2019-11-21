@@ -3,8 +3,9 @@
 #include <string>
 #include <iostream>
 #include "HumanPlayer.h"
-#include "ComputerPlayer.h"
 #include "HardBOT.h"
+
+
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine
 {
@@ -19,14 +20,14 @@ private:
 
 	olc::vi2d isoTileSize = { 40 , 20 }; /// Tamaño en pixeles de cada una de mis Tiles isometricos.
 
-	olc::vi2d vWorldOrigen = { 5 , 3 };/// Donde quiero que comience mi mapa en pantalla.
+	olc::vi2d vWorldOrigen = { 5 , 4 };/// Donde quiero que comience mi mapa en pantalla.
 	olc::vi2d vWarOrigen = { 30 , 30 };
 
 	/// Puntero que va a contener mis sprite a dibujar en consola.
 	olc::Sprite* isoPng = nullptr;
 	olc::Sprite* isoPng2 = nullptr;
 	
-	HumanPlayer * p1 = new HumanPlayer("facundo");
+	HumanPlayer * p1 = new HumanPlayer("Facundo");
 	HardBOT * p2 = new HardBOT;
 	Barco* Reg_shot = nullptr;
 	Barco* Reg_shotIA = nullptr;
@@ -35,9 +36,11 @@ private:
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
 	
-	int cntBarco = 0; /// contador de barcos en mapa. graficos
-	int IA_shot = 0;
-	/// Un vector lista para contener eventos para dar informacion en pantalla.
+	int cntBarco = 0; /// contador de barcos en mapa. graficos.
+	int IA_shot = 0; /// Contador de disparos .
+	bool status = false; /// Bool para iniciar el juego .
+
+    /// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
 
 public:
@@ -61,8 +64,8 @@ public:
 			{
 				
 			}
-			DrawString(4, 84, "Precione [N] para Jugar de nuevo", olc::DARK_RED, 1);
-			DrawString(4, 94, "Preciones [ESC] para Salir del juego", olc::DARK_RED, 1);
+			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
+			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
 		}
 		else if (p2->revisarFlota() == false)
 		{
@@ -75,8 +78,8 @@ public:
 			{
 				
 			}
-			DrawString(4, 84, "Precione [N] para Jugar de nuevo", olc::DARK_RED, 1);
-			DrawString(4, 94, "Preciones [ESC] para Salir del juego", olc::DARK_RED, 1);
+			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
+			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
 		}
 		
 	}
@@ -84,7 +87,7 @@ public:
 	bool OnUserCreate() override
 	{
 		/// Cargo la direecion de mis sprites.
-		isoPng = new olc::Sprite("assets/iso1.png"); // 3
+		isoPng = new olc::Sprite("assets/iso1.png"); 
 		isoPng2 = new olc::Sprite("assets/iso2.png");
 		/// Doy el tamaño de mi mapa al arreglo.
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
@@ -181,7 +184,6 @@ public:
 		{
 			for (int x = 0; x < vWorldSize.x; x++)
 			{
-
 				/// Convierte las celdas a cordenadas del mundo.
 				olc::vi2d vWorld = ToScreen(x, y);
 
@@ -189,12 +191,12 @@ public:
 				{
 				case 0:
 					// Ocean Tile
-					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+					DrawPartialSprite(vWorld.x, vWorld.y, isoPng2, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				case 1: // Flota de 2
 					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 2 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
-				case 2: // celda roja
+				case 2: // celda cruz 
 					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
 				case 3: // Flota de 3
@@ -202,13 +204,15 @@ public:
 					break;
 				case 4: // Segunda flota de 3
 					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng2, 0 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
-					
 					break;
 				case 5: // flota de 4
 					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 1 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
 					break;
 				case 6: // flota de 5
 					DrawPartialSprite(vWorld.x, vWorld.y - isoTileSize.y, isoPng, 3 * isoTileSize.x, 1 * isoTileSize.y, isoTileSize.x, isoTileSize.y * 2);
+					break;
+				case 7: /// Disparo agua
+					DrawPartialSprite(vWorld.x, vWorld.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 
 				}
@@ -232,10 +236,10 @@ public:
 					break;
 				case 1:
 					// Hit Agua
-					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
+					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng2, 2 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
 					break;
 				case 2:
-					// Hit Barco                             
+					// Hit Barco RED                          
 					DrawPartialSprite(vWorld2.x, vWorld2.y, isoPng, 0 * isoTileSize.x, 1, isoTileSize.x, isoTileSize.y);
 					break;
 				}
@@ -243,7 +247,7 @@ public:
 			}
 		}
 
-
+		
 		auto AddEvent = [&](std::string s)
 		{
 			listEvents.push_back(s);
@@ -253,7 +257,7 @@ public:
 		for (auto& s : listEvents)
 		{
 			// 8 + 20  Separacion entre textos olc::Pixel(nLog * -17, nLog * -17, nLog * -17)        /// los 3 * 16 
-			DrawString(350, nLog * 8 - 8, s, olc::Pixel(nLog * 18, nLog * 18, nLog * 18));
+			DrawString(320, nLog * 8 - 8, s, olc::Pixel(nLog * 18, nLog * 18, nLog * 18));
 			nLog++;
 		}
 
@@ -276,13 +280,15 @@ public:
 
 		if (GetKey(olc::Key::E).bPressed) /// Solo para debugiar
 		{
+			status = true;
 			SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::VERY_DARK_CYAN);
-			vWarOrigen = { 16, 3 };
+			vWarOrigen = { 16, 4 };
+			p2->placeShips(vSelected.x, vSelected.y);
 			system("cls");
 			p2->board.mostrarMapa();
-			p2->placeShips(vSelected.x, vSelected.y);
 		}
+
 		if (GetKey(olc::Key::A).bPressed)
 		{
 			system("cls");
@@ -296,9 +302,9 @@ public:
 		/// Convierto las cordenadas a espacio "real" en el mundo.
 		olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
 		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y);
+		
 
-
-		if (GetMouse(0).bPressed)
+		if (GetMouse(0).bPressed && status)
 		{
 			if (p1->placeShips(vSelected.x, vSelected.y)) {
 
@@ -348,8 +354,8 @@ public:
 					break;
 				}
 			}
-			else {
-
+			else { /// Si estatus es 1 puedo jugar , sino preciona E
+				
 				/// Si se hace click fuera del mapa se printea el mensaje
 				if (!Map_crtlvar && !Mapwar_crtlvar)
 					AddEvent("Fuera de los Mapas");
@@ -367,46 +373,46 @@ public:
 						/// Disparo del jugador Humano
 						Reg_shot = p1->disparar(vSelected2.x, vSelected2.y, p2->board);
 						AddEvent(" ");
-						AddEvent("> Disparaste en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
-
-						if (Reg_shot == nullptr)
+						if (Reg_shot == nullptr) /// Si el disparo devuelve Null Agua
 						{
-							AddEvent("> --[AGUA]--");
-							pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 1;
+							AddEvent(">"+p1->name+": --[AGUA]--");
+							pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 1; // Cambio a una casilla disparada
 						}
 						else {
 							
-							AddEvent("> Le diste a un Barco"); /// Si le das a un Barco
+							AddEvent(">"+p1->name+": Le dio a un Barco"); /// Si le das a un Barco
 							if (Reg_shot->hundido()) /// Se fija si fue hundido
 							{
-								AddEvent("> Flota enemiga-[" + Reg_shot->name + "]-Hundida"); /// Te dice que barco fue hundido
+								AddEvent(">" + p1->name + ":");
+								AddEvent("Flota enemiga-["+Reg_shot->name+"]-Hundida"); /// Te dice que barco fue hundido
 							}
 							pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 2;
 						}
 
+						
 						//// Disparo de la IA // si dispara 2 veces al mismo lugar causa un bug grafico, es solucionable pero si la IA funciona 
 						//// Jamas volveria a disparar en el mismo lugar
 						Reg_shotIA = p2->disparar(vSelected2.x, vSelected2.y, p1->board);
-						AddEvent("> LA IA disparo en [" + std::to_string(vSelected2.x) + "]" + "[" + std::to_string(vSelected2.y) + "]");
 						IA_shot++;
 						if (Reg_shotIA == nullptr)
 						{
-							AddEvent("> --[IA - AGUA]--");
-							pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 2;
+							AddEvent(">IA "+p2->name+": --[AGUA]--");
+							pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 7;
 						}
 						else
 						{
-							AddEvent("> LA IA le pego a tu Barco");
+							AddEvent(">IA "+p2->name+": le pego a tu Barco");
 							if (Reg_shotIA->hundido())
 							{
-								AddEvent("> La IA hundio tu Flota [" + Reg_shotIA->name + "]");
+								AddEvent(">IA "+ p2->name +":");
+								AddEvent("Hundio tu Flota [" + Reg_shotIA->name + "]");
 							}
 							pWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 2;
 						}
 						
 					}
 					else
-						AddEvent("> --[Disparo invalido]---");
+						AddEvent("> --[Disparo invalido]--");
 				}
 			}
 		}
@@ -470,12 +476,30 @@ public:
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1->name+"]", olc::RED);
-		DrawString(700, 2, "-----------------",olc::WHITE);
-		DrawString(700, 12,"Enemigo IA ->["+p2->name+"]",olc::RED);
-		DrawString(700, 22, "La IA disparo ->[" + std::to_string(IA_shot) + "]");
-		DrawString(700, 32,"-----------------",olc::WHITE);
+		DrawString(650, 2, "------------------",olc::WHITE);
+		DrawString(650, 12," Enemigo IA ->["+p2->name+"]",olc::RED);
+		DrawString(650, 22," La IA disparo ->["+ std::to_string(IA_shot) +"]");
+		DrawString(650, 32,"-------------------",olc::WHITE);
 		
-		if (Map_crtlvar)
+		if (!status)
+		{
+			DrawString(250, 4, ".:Batalla Naval UTN:.", olc::WHITE, 1);
+			DrawString(250, 14, "Made by :", olc::WHITE, 1);
+			DrawString(250, 24, "[Facundo , Franco and Martin]", olc::RED, 1);
+			DrawString(250, 55, "Presione la tecla [E] para Jugar", olc::VERY_DARK_RED, 2);
+		}
+		else if (status && cntBarco != 5)
+		{
+			DrawString(300, 50, "Coloque sus Flotas en el mapa con agua",olc::WHITE,1);
+			DrawString(300, 60, "Flota ->["+p1->piezas[cntBarco].name +"]",olc::WHITE,1);
+			DrawString(300, 70, "Presiona [R] para rotar el Barco", olc::WHITE, 1);
+		}
+		else if (cntBarco == 5 && IA_shot == 0)
+		{
+			DrawString(300, 50, "Dispara en el Mapa enemigo en blanco,", olc::WHITE, 1);
+			DrawString(300, 60, "hasta hundir todos los Barcos enemigos.", olc::WHITE, 1);
+		}
+		else if (Map_crtlvar)
 		{
 			DrawString(4, 34, "Mapa[1] X: " + std::to_string(vSelected.x) + ",Y: " + std::to_string(vSelected.y), olc::BLACK);
 		}
@@ -499,6 +523,5 @@ public:
 
 void Newgame(Game * A)
 {
-	delete A;
-	A = new Game;
+	
 }

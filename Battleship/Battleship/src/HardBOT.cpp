@@ -142,9 +142,10 @@ void HardBOT::agregaEnHeatMap(int x, int y, Barco& ship) {// "inserta" la iterac
 void HardBOT::eligePos(int& x, int& y) {//Elige la posicion donde conviene disparar en modo busqueda
 	int highest = 0;
 	int hiY, hiX;
+	srand(time(0)); 
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 10; j++) {
-			if (heatMap[i][j] > highest) {
+			if (heatMap[i][j] > highest || (heatMap[i][j]== highest && (rand() % 2))  ){ //si los valores son iguales es random si lo toma o no, para hacer la ia menos predecible
 				highest = heatMap[i][j];
 				hiX = i;
 				hiY = j;
@@ -159,15 +160,15 @@ void HardBOT::eligePos(int& x, int& y) {//Elige la posicion donde conviene dispa
 Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	srand(time(0));
 
-
+	puts("\n Comienzo de funcion");
 	if (isSearching) {
 		funcionProbabilidad();
 		eligePos(x, y);
 	}
 	else {
-		int random = rand() % (CoordenadasSospechosas.size() + 1); // para disparar a una coordenada deseada al azar
-		intToMatrix(x, y, CoordenadasSospechosas[random]);
-		CoordenadasSospechosas.erase(CoordenadasSospechosas.begin() + random);
+		//int random = rand() % (CoordenadasSospechosas.size() + 1); // para disparar a una coordenada deseada al azar
+		intToMatrix(x, y, CoordenadasSospechosas.back());
+		CoordenadasSospechosas.pop_back();
 	}
 
 
@@ -178,13 +179,16 @@ Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 		setShot(x, y);
 		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
 		if (barcoDisparado) {
+			puts("Barcodisparado");
 			if (barcoDisparado->hundido())
 				remueveDeBarcosEnemigos(*barcoDisparado);//si se hundio el barco lo saca del vector de barcos buscados
 			else {
+				std::cout << "entrando zona mala" << "\n";
 				agregaSospechosos(x - 1, y);
 				agregaSospechosos(x + 1, y);
 				agregaSospechosos(x, y - 1);
 				agregaSospechosos(x, y + 1);
+				std::cout << "saliendo zona mala" << "\n";
 			}
 		}
 	}
