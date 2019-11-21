@@ -227,7 +227,7 @@ Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	 int elementos = barcosEnemigos.size();
 	 for (int i = 0; i< elementos; i++) {
 		 if (hundido.name == barcosEnemigos[i].name)
-			 barcosEnemigos.erase(barcosEnemigos.begin() + i);
+			 barcosEnemigos.erase(barcosEnemigos.begin() + i); //hola
 	 }
  }
 
