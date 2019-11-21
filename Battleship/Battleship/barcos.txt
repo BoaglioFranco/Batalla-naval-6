@@ -1,10 +1,10 @@
-Destructor
+Destructores
 2
-Submarino
+Submarinos
 3
-Crucero
+Submarinos
 3
-Buque
+Buques
 4
 Portaviones
 5

@@ -67,8 +67,12 @@
     <Image Include="assets\iso1.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\isooriginal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="src\Barco.txt" />
+    <Text Include="barcos.txt" />
   </ItemGroup>
 </Project>
