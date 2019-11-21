@@ -55,21 +55,3 @@ Barco * ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	return barcoDisparado;
 }
 
-bool ComputerPlayer::revisarFlota()
-{
-	int i = 0;
-	int flag = 0;
-
-	while (i < 5 && flag == 0)
-	{
-		if (piezas[i].hundido())
-			i++;
-		else
-			flag = 1;
-	}
-
-	if (flag == 0)
-		this->TieneFlota = false;
-
-	return this->TieneFlota;
-}

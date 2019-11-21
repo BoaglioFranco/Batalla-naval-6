@@ -11,7 +11,6 @@ public:
 	ComputerPlayer();
 	bool placeShips(int& x, int& y) override; 
 	Barco * disparar(int& x, int& y, Mapa& Mapa_enemigo) override;
-	bool revisarFlota();
 		
 };
 

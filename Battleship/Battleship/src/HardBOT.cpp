@@ -3,7 +3,7 @@
 HardBOT::HardBOT() {
 
 	this->name = "Testing";
-	
+	this->isSearching = true;
 
 	///Pone los barcos en piezas
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
@@ -81,7 +81,7 @@ bool HardBOT::placeShips(int& x, int& y) {
 
 void HardBOT::funcionProbabilidad() {//Recorrido que hace todos los turnos la ia para determinar cual es el lugar mas optimo para disparar
 
-	for (Barco b : barcosEnemigos) {//todos los barcos vivos que tiene el enemigo.
+	for (Barco& b : barcosEnemigos) {//todos los barcos vivos que tiene el enemigo.
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
 				if (isValidPosition(i, j, b)) {
@@ -100,6 +100,23 @@ void HardBOT::funcionProbabilidad() {//Recorrido que hace todos los turnos la ia
 		}
 	
 	}
+
+}
+
+
+void HardBOT::resetearHeatMap() {//resetea el mapa cada turno.
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (heatMap[i][j] != -1) //-1 indica si ya fue disparada la casilla
+				heatMap[i][j] = 0;
+		}
+	}
+
+
+}
+
+void HardBOT::setShot(int x, int y) {//indica que la casilla del heatmap fue disparada.
+	heatMap[x][y] = -1;
 
 }
 
@@ -122,21 +139,108 @@ void HardBOT::agregaEnHeatMap(int x, int y, Barco& ship) {// "inserta" la iterac
 	
 }
 
+void HardBOT::eligePos(int& x, int& y) {//Elige la posicion donde conviene disparar en modo busqueda
+	int highest = 0;
+	int hiY, hiX;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (heatMap[i][j] > highest) {
+				highest = heatMap[i][j];
+				hiX = i;
+				hiY = j;
+			}
+		}
+	}
+	x = hiX;
+	y = hiY;
+}
+
 
 Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
-
 	srand(time(0));
-	do {
-		x = rand() % 10;
-		y = rand() % 10; //Dispara random
-	} while (Mapa_enemigo.grid[x][y].isShot);
 
-	Barco* barcoDisparado = nullptr;
-	if (Mapa_enemigo.RegistrarDisparo(x, y))
-	{
-		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
+
+	if (isSearching) {
+		funcionProbabilidad();
+		eligePos(x, y);
+	}
+	else {
+		int random = rand() % (CoordenadasSospechosas.size() + 1); // para disparar a una coordenada deseada al azar
+		intToMatrix(x, y, CoordenadasSospechosas[random]);
+		CoordenadasSospechosas.erase(CoordenadasSospechosas.begin() + random);
 	}
 
 
+	Barco* barcoDisparado = nullptr;
+	if (Mapa_enemigo.RegistrarDisparo(x, y))//efectua el disparo
+	{
+		resetearHeatMap(); //modifica los valores necesarios en heatmap.
+		setShot(x, y);
+		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
+		if (barcoDisparado) {
+			if (barcoDisparado->hundido())
+				remueveDeBarcosEnemigos(*barcoDisparado);//si se hundio el barco lo saca del vector de barcos buscados
+			else {
+				agregaSospechosos(x - 1, y);
+				agregaSospechosos(x + 1, y);
+				agregaSospechosos(x, y - 1);
+				agregaSospechosos(x, y + 1);
+			}
+		}
+	}
+
+	this->isSearching = (CoordenadasSospechosas.size() < 1);//si las coordenadas estan vacias se pone en modo busqueda, y visceversa
 	return barcoDisparado;
 }
+
+ void HardBOT::printPedorro() {
+	 setShot(5, 5);
+	 setShot(2, 5);
+	 setShot(1, 3);
+	 setShot(9, 9);
+	 setShot(4, 3);
+	 setShot(6, 8);
+	 setShot(5, 0);
+	 funcionProbabilidad();
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			std::cout << heatMap[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+}
+
+ int HardBOT::matrixToInt(int x, int y) {
+	 return (x + (y * 10));
+ }
+
+ void HardBOT::intToMatrix(int& x, int& y, int num) {//Pasa de int a coordenada para disparar
+	 x = num % 10;
+	 y = num / 10;
+ }
+
+ void HardBOT::remueveDeBarcosEnemigos(Barco& hundido) {//Borra el barco que fue hundido de los barcos buscados
+	 int elementos = barcosEnemigos.size();
+	 for (int i = 0; i< elementos; i++) {
+		 if (hundido.name == barcosEnemigos[i].name)
+			 barcosEnemigos.erase(barcosEnemigos.begin() + i);
+	 }
+ }
+
+ void HardBOT::agregaSospechosos(int x, int y) {//agrega una casilla al vector de sospechosos
+	 bool posValida = (-1 < y && y < 10) && (-1 < x && x < 10);// se fija que este dentro de la matriz
+	 if (posValida && heatMap[x][y] != -1) {//si la pos es valida y la casilla no fue disparada
+		 bool found = false;
+		 int num = matrixToInt(x, y);
+		 int elementos = CoordenadasSospechosas.size();
+		 for (int i = 0; i < elementos; i++) {
+			 if (CoordenadasSospechosas[i] == num)
+				 found = true;
+		 }
+		 if (!found) {
+			 CoordenadasSospechosas.push_back(num);//Si la casilla no se encuentra ya en la lista de espera la agrega.
+		 }
+	 }
+
+
+ }

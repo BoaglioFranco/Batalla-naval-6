@@ -4,7 +4,7 @@
 #include <iostream>
 #include "HumanPlayer.h"
 #include "ComputerPlayer.h"
-
+#include "HardBOT.h"
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine
 {
@@ -27,7 +27,7 @@ private:
 	olc::Sprite* isoPng2 = nullptr;
 	
 	HumanPlayer * p1 = new HumanPlayer("facundo");
-	ComputerPlayer * p2 = new ComputerPlayer;
+	HardBOT * p2 = new HardBOT;
 	Barco* Reg_shot = nullptr;
 	Barco* Reg_shotIA = nullptr;
 	std::string Ganador;
@@ -48,7 +48,7 @@ public:
 		sAppName = "Game";
 	}
 
-	void Winner(HumanPlayer* p1, ComputerPlayer* p2)
+	void Winner(HumanPlayer* p1, HardBOT* p2)
 	{
 		if (p1->revisarFlota() == false)
 		{
