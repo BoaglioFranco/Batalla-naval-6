@@ -32,8 +32,9 @@ private:
 	olc::Sprite* isoPng2 = nullptr;
 
 	HumanPlayer* p1 = new HumanPlayer();
+	std::string name = p1->name;
 	Player* p2 = nullptr;
-	ComputerPlayer* A = nullptr;
+	
 	Barco* Reg_shot = nullptr;
 	Barco* Reg_shotIA = nullptr;
 	std::string Ganador;
@@ -51,6 +52,7 @@ private:
 	int cntBarco = 0; /// contador de barcos en mapa. graficos.
 	int IA_shot = 0; /// Contador de disparos .
 	bool status = false; /// Bool para iniciar el juego .
+	bool IsRunnig = true; /// Variable de juego en funcionamiento.
 
     /// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
@@ -63,12 +65,14 @@ public:
 		
 		if (Botdifficulty == 1)
 		{
-			std::cout << "Hola easyplayer" << std::endl;
+			std::cout << "Seleccionado easybot." << std::endl;
+			std::cout << "Hola easybot!!" << std::endl;
 			p2 = new ComputerPlayer;
 		}
 		else if (Botdifficulty == 2)
 		{
-			std::cout << "Hola hardbot" << std::endl;
+			std::cout << "Seleccionado hardbot." << std::endl;
+			std::cout << "Hola hardbot!!" << std::endl;
 			p2 = new HardBOT;
 		}
 		
@@ -86,7 +90,25 @@ public:
 			DrawString(4, 34, Ganador, olc::BLACK, 5);
 			if (GetKey(olc::Key::N).bPressed)
 			{
-				
+				delete p1;
+				delete pWorld;
+				delete pWarWorld;
+
+				Player* p1 = new HumanPlayer(name);
+				pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
+				pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
+				cntBarco = 0;
+				if (Botdifficulty == 1)
+				{
+					delete p2;
+					Player * p2 = new ComputerPlayer;
+				}
+				else if (Botdifficulty == 2)
+				{
+					delete p2;
+					Player * p2 = new HardBOT;
+				}
+				status = false;
 			}
 			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
 			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
@@ -100,11 +122,31 @@ public:
 			DrawString(4, 34, Ganador, olc::BLACK, 5);
 			if (GetKey(olc::Key::N).bPressed)
 			{
-				
+				delete p1;
+				delete pWorld;
+				delete pWarWorld;
+
+				Player* p1 = new HumanPlayer(name);
+				pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
+				pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
+				cntBarco = 0;
+				if (Botdifficulty == 1)
+				{
+					delete p2;
+					Player* p2 = new ComputerPlayer;
+				}
+				else if (Botdifficulty == 2)
+				{
+					delete p2;
+					Player* p2 = new HardBOT;
+				}
+				status = false;
 			}
 			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
 			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
 		}
+			
+		
 		
 	}
 
@@ -121,7 +163,6 @@ public:
 		//gHit = Mix_LoadWAV("Music/Hit.wav");
 		//gMiss = Mix_LoadWAV("Music/Miss.wav");
 		//Mix_PlayMusic(gMusic, -1);
-
 
 
 		/// Cargo la direecion de mis sprites.
@@ -178,7 +219,7 @@ public:
 		int nLog = 0; /// Variable de control textos flotantes.
 		int Hori = 1; /// Variable de control poss.
 		int vert = 1; /// Variable de control poss.
-		bool IsRunnig = true; /// Variable de juego en funcionamiento.
+		
 
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
@@ -295,6 +336,7 @@ public:
 
 		for (auto& s : listEvents)
 		{
+			// color del texto mostrado por pantalla , como la variable se resetea puedo ir cambiando el color a medida que avanza
 			// 8 + 20  Separacion entre textos olc::Pixel(nLog * -17, nLog * -17, nLog * -17)        /// los 3 * 16 
 			DrawString(320, nLog * 8 - 8, s, olc::Pixel(nLog * 18, nLog * 18, nLog * 18));
 			nLog++;
@@ -310,7 +352,11 @@ public:
 		{
 			p1->piezas[cntBarco].setOrientation();
 		}
-
+		if (GetKey(olc::Key::A).bPressed)
+		{
+			p1->board.mostrarMapa();
+			std::cout << "\n" << std::endl;
+		}
 		/// inicio el mapa del bot y lo traigo a pantalla
 		if (GetKey(olc::Key::E).bPressed) 
 		{
@@ -319,6 +365,7 @@ public:
 			Clear(olc::VERY_DARK_CYAN);
 			vWarOrigen = { 16, 4 };
 			p2->placeShips(vSelected.x, vSelected.y);
+			p2->board.mostrarMapa();
 		}
 
 		///// Control de la musica
@@ -357,8 +404,9 @@ public:
 		/// Coloco mis barcos en pantalla 
 		if (GetMouse(0).bPressed && status)
 		{
-			if (p1->placeShips(vSelected.x, vSelected.y)) { /// Coloca
-
+			std::cout << "Hola" << std::endl;
+			if (p1->placeShips(vSelected.x, vSelected.y)) { /// Coloca los barcos
+				
 				if (p1->piezas[cntBarco].getOrientation())
 					Hori = 10;
 
@@ -515,6 +563,8 @@ public:
 		
 		if (GetKey(olc::Key::ESCAPE).bPressed)
 		{
+		  delete p1;
+		  delete p2;
 		  IsRunnig = false;
 		}
 
@@ -522,17 +572,18 @@ public:
 
 
 		
-		// Go back to normal drawing with no expected transparency
+		// Pantalla normal , sin transparencia.
 		SetPixelMode(olc::Pixel::NORMAL);
 
-		// Draw Debug Info
+		// DEBUG INFO A PANTALLA
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1->name+"]", olc::RED);
 		DrawString(650, 2, "------------------",olc::WHITE);
-		DrawString(650, 12," Enemigo IA ->["+p2->name+"]",olc::RED);
-		DrawString(650, 22," La IA disparo ->["+ std::to_string(IA_shot) +"]");
+		DrawString(650, 12,"Enemigo : ["+p2->name+"]",olc::RED);
+		DrawString(650, 22,"Turno : ["+ std::to_string(IA_shot) +"]");
 		DrawString(650, 32,"-------------------",olc::WHITE);
+		DrawString(610, 290, "Precione [ESC] para salir del juego.", olc::WHITE);
 		
 		if (!status)
 		{
@@ -573,6 +624,7 @@ public:
 		return IsRunnig;
 	}
 
+	/// Metodo para liberar memoria.
 	bool OnUserDestroy() override
 	{
 		/*Mix_FreeMusic(gMusic);

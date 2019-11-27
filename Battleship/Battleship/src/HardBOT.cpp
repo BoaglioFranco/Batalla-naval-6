@@ -65,14 +65,14 @@ bool HardBOT::isValidPosition(int x, int y, Barco& ship) {
 
 bool HardBOT::placeShips(int& x, int& y) {
 	srand(time(0)); //setea seed para el random
-	for (static int i = 0; i < 5; i++) {
+	for (ite_Barcos = 0; ite_Barcos < 5; ite_Barcos++) {
 		do {
 			x = rand() % 10;
 			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
 			if (rand() % 2)
-				piezas[i].setOrientation();
+				piezas[ite_Barcos].setOrientation();
 
-		} while (!board.insertShip(x, y, piezas[i]));
+		} while (!board.insertShip(x, y, piezas[ite_Barcos]));
 	}
 
 	return 1;

@@ -5,7 +5,7 @@
 	 std::cout << "Ingrese el nombre de jugador\n";
 	 std::getline(std::cin >> std::ws, name); 
 	 this->name = name;
-
+	 ite_Barcos = 0;
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
 	archivoBarcos.open("barcos.txt");
 	if (archivoBarcos.fail()) {
@@ -22,18 +22,39 @@
 	archivoBarcos.close();
 }
 
+ HumanPlayer::HumanPlayer(const std::string& name) {
+
+	 this->name = name;
+	 ite_Barcos = 0;
+	 std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
+	 archivoBarcos.open("barcos.txt");
+	 if (archivoBarcos.fail()) {
+		 std::cerr << "Error en la lectura del archivo" << std::endl;
+		 exit(1);
+	 }
+	 else {
+		 int sizeBarco;
+		 for (int i = 0; i < 5; i++) {
+			 archivoBarcos >> piezas[i].name >> sizeBarco;
+			 piezas[i].setSize(sizeBarco);
+		 }
+	 }
+	 archivoBarcos.close();
+ }
+
  bool HumanPlayer::placeShips(int& x, int& y) {
-	 static int i = 0;
 	 bool ace;
 
-	 if (board.insertShip(x, y, piezas[i]) && i < 5)
+	 if (board.insertShip(x, y, piezas[ite_Barcos]) && ite_Barcos < 5)
 	 {
-		   std::cout << "Player " + name + " inserto el barco -> " + piezas[i].name << std::endl;
-		   std::cout << "Se coloco en mapa el Barco: " << piezas[i].name
-			 << "\n tamaño: " << piezas[i].getSize() << "\n"
-			 << "------------------------------------------" << std::endl;
+		   std::cout << "Player " + name + " inserto el barco -> " + piezas[ite_Barcos].name << std::endl;
+		   std::cout << "Se coloco en mapa el Barco: " << piezas[ite_Barcos].name
+			 << "\n tamaño: " << piezas[ite_Barcos].getSize() << "\n"
+			 << "------------------------------------------\n" << 
+			    "valor I "<< ite_Barcos <<std::endl;
+
 		 ace = true;
-		 i++;
+		 ite_Barcos++;
 	 }
 	 else {
 		 ace = false;
