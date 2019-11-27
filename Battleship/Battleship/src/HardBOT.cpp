@@ -160,31 +160,33 @@ void HardBOT::eligePos(int& x, int& y) {//Elige la posicion donde conviene dispa
 Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	srand(time(0));
 
-	if (isSearching) {
-		funcionProbabilidad();
+	if (isSearching) {//La IA realiza dos algoritmos distintos dependiendo de si encontro al barco o no
+
+		funcionProbabilidad();//Determina donde es mas probable que haya un barco y elige esa casilla
 		eligePos(x, y);
 	}
 	else {
-		//int random = rand() % (CoordenadasSospechosas.size() + 1); // para disparar a una coordenada deseada al azar
-		intToMatrix(x, y, CoordenadasSospechosas.back());
-		CoordenadasSospechosas.pop_back();
+		eligeSospechoso(x, y); //elige una casilla del vector de coordenadas sospechosas
 	}
 
 
 	Barco* barcoDisparado = nullptr;
 	if (Mapa_enemigo.RegistrarDisparo(x, y))//efectua el disparo
 	{
-		resetearHeatMap(); //modifica los valores necesarios en heatmap.
-		setShot(x, y);
+		std::cout << x << " " << y << std::endl;
+		resetearHeatMap(); //modifica los valores necesarios
+		setShot(x, y);     //en heatmap.
 		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
 		if (barcoDisparado) {
-			if (barcoDisparado->hundido())
+			if (barcoDisparado->hundido()) {
 				remueveDeBarcosEnemigos(*barcoDisparado);//si se hundio el barco lo saca del vector de barcos buscados
+				BorraHundidoDeSospechosas(*barcoDisparado);
+			}
 			else {
-				agregaSospechosos(x - 1, y);
-				agregaSospechosos(x + 1, y);
-				agregaSospechosos(x, y - 1);
-				agregaSospechosos(x, y + 1);
+				agregaSospechosos(x - 1, y, *barcoDisparado);
+				agregaSospechosos(x + 1, y, *barcoDisparado);
+				agregaSospechosos(x, y - 1, *barcoDisparado);
+				agregaSospechosos(x, y + 1, *barcoDisparado);
 			}
 		}
 	}
@@ -193,23 +195,7 @@ Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	return barcoDisparado;
 }
 
- void HardBOT::printPedorro() {
-	 setShot(5, 5);
-	 setShot(2, 5);
-	 setShot(1, 3);
-	 setShot(9, 9);
-	 setShot(4, 3);
-	 setShot(6, 8);
-	 setShot(5, 0);
-	 funcionProbabilidad();
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			std::cout << heatMap[i][j] << " ";
-		}
-		std::cout << "\n";
-	}
-}
-
+/*
  int HardBOT::matrixToInt(int x, int y) {
 	 return (x + (y * 10));
  }
@@ -218,7 +204,7 @@ Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	 x = num % 10;
 	 y = num / 10;
  }
-
+ */
  void HardBOT::remueveDeBarcosEnemigos(Barco& hundido) {//Borra el barco que fue hundido de los barcos buscados
 	 int elementos = barcosEnemigos.size();
 	 for (int i = 0; i< elementos; i++) {
@@ -227,20 +213,45 @@ Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	 }
  }
 
- void HardBOT::agregaSospechosos(int x, int y) {//agrega una casilla al vector de sospechosos
+ void HardBOT::agregaSospechosos(int x, int y, Barco& provieneDe) {//agrega una casilla al vector de sospechosos
 	 bool posValida = (-1 < y && y < 10) && (-1 < x && x < 10);// se fija que este dentro de la matriz
 	 if (posValida && heatMap[x][y] != -1) {//si la pos es valida y la casilla no fue disparada
 		 bool found = false;
-		 int num = matrixToInt(x, y);
+
 		 int elementos = CoordenadasSospechosas.size();
 		 for (int i = 0; i < elementos; i++) {
-			 if (CoordenadasSospechosas[i] == num)
+			 if (CoordenadasSospechosas[i].x == x && CoordenadasSospechosas[i].y == y)
 				 found = true;
 		 }
 		 if (!found) {
-			 CoordenadasSospechosas.push_back(num);//Si la casilla no se encuentra ya en la lista de espera la agrega.
+			 _stCoordenadasHardB aux;
+			 aux.x = x;
+			 aux.y = y;
+			 aux.provenienteDe = &provieneDe;
+			 CoordenadasSospechosas.push_back(aux);//Si la casilla no se encuentra ya en la lista de espera la agrega.
 		 }
 	 }
 
 
+ }
+
+ void HardBOT::eligeSospechoso(int& x, int& y) {
+	 _stCoordenadasHardB aux = CoordenadasSospechosas.back();
+	 CoordenadasSospechosas.pop_back();
+	 x = aux.x;
+	 y = aux.y;
+ }
+
+ void HardBOT::BorraHundidoDeSospechosas(Barco& pHundido) {
+	 int elementos = CoordenadasSospechosas.size();
+	 int i = 0;
+	 while(i < elementos) {
+		 if (pHundido.name == CoordenadasSospechosas[i].provenienteDe->name) {
+			 CoordenadasSospechosas.erase(CoordenadasSospechosas.begin() + i);
+		 }
+		 else{
+			 i++;
+		 }
+		 elementos = CoordenadasSospechosas.size();
+	 }
  }
