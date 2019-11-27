@@ -5,16 +5,15 @@
 //#include <SDL2/SDL.h>
 //#include <SDL2/SDL_mixer.h>
 #include "HumanPlayer.h"
+#include "EasyBOT.h"
+#include "MediumBot.h"
 #include "HardBOT.h"
-#include "ComputerPlayer.h"
-
 
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine
 {
 private:
-	
-	
+
 	static const int _WordX = 10; /// Tamño de mi mapa eje x 
 	static const int _WordY = 10; /// Tamño de mi mapa eje y
 
@@ -31,17 +30,18 @@ private:
 	olc::Sprite* isoPng = nullptr;
 	olc::Sprite* isoPng2 = nullptr;
 
-	HumanPlayer* p1 = new HumanPlayer();
-	Player* p2 = nullptr;
-	ComputerPlayer* A = nullptr;
-	Barco* Reg_shot = nullptr;
-	Barco* Reg_shotIA = nullptr;
-	std::string Ganador;
-	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
+	HumanPlayer* p1 = new HumanPlayer(); /// Creo player
+	std::string name = p1->name; // guardo su nombre si quiere volver a jugar
+	Player* p2 = nullptr; // Player para contener cualquier bot
 	
+	Barco* Reg_shot = nullptr; /// punteros para registrar disparos en mis barcos (Humano)
+	Barco* Reg_shotIA = nullptr; /// punteros para registrar disparos en mis barcos (Bot)
+	std::string Ganador;
+	
+	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
-	int Botdifficulty;
+	int Botdifficulty; /// dificultad selecionada
 
 	/*Mix_Music* gMusic = nullptr;
 	Mix_Chunk* gHitD = nullptr;
@@ -51,6 +51,7 @@ private:
 	int cntBarco = 0; /// contador de barcos en mapa. graficos.
 	int IA_shot = 0; /// Contador de disparos .
 	bool status = false; /// Bool para iniciar el juego .
+	bool IsRunnig = true; /// Variable de juego en funcionamiento.
 
     /// Un vector lista para contener eventos para dar informacion en pantalla.
 	std::list<std::string> listEvents;
@@ -59,24 +60,35 @@ public:
 
 	Game(int difficulty)
 	{
-		this->Botdifficulty = difficulty;
+		this->Botdifficulty = difficulty; /// guardo la dificultad
 		
+		/// Segun la dificultad selecionada creo el bot que va a jugar
 		if (Botdifficulty == 1)
 		{
-			std::cout << "Hola easyplayer" << std::endl;
-			p2 = new ComputerPlayer;
+			std::cout << "Seleccionado easybot." << std::endl;
+			std::cout << "Hola easybot!!" << std::endl;
+			p2 = new EasyBOT;
 		}
 		else if (Botdifficulty == 2)
 		{
-			std::cout << "Hola hardbot" << std::endl;
+			std::cout << "Seleccionado Mediumbot." << std::endl;
+			std::cout << "Hola Mediumbot!!" << std::endl;
+			p2 = new MediumBot;
+		}
+		else if (Botdifficulty == 3)
+		{
+			std::cout << "Seleccionado hardbot." << std::endl;
+			std::cout << "Hola hardbot!!" << std::endl;
 			p2 = new HardBOT;
 		}
-		
-		sAppName = "Game";
+
+		sAppName = "Game"; /// nombre de la ventana
 	}
 	
 	void Winner(HumanPlayer* p1, Player * p2)
 	{
+		/// reviso constantemente que el jugador o el bot tengan toda su flota
+		/// para determinar un ganador
 		if (p1->revisarFlota() == false)
 		{
 			Ganador = "Ganador: " + p2->name;
@@ -84,9 +96,31 @@ public:
 			SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::WHITE);
 			DrawString(4, 34, Ganador, olc::BLACK, 5);
-			if (GetKey(olc::Key::N).bPressed)
+
+			if (GetKey(olc::Key::N).bPressed) /// si se preciona N se resetean tanto jugadores como bots
 			{
-				
+				delete p1;
+				delete p2;
+				delete pWorld;
+				delete pWarWorld;
+
+				Player* p1 = new HumanPlayer(name);
+				pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
+				pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
+				cntBarco = 0;
+				if (Botdifficulty == 1)
+				{
+					Player * p2 = new EasyBOT;
+				}
+				else if (Botdifficulty == 2)
+				{
+					Player * p2 = new MediumBot;
+				}
+				else if (Botdifficulty == 3)
+				{
+					Player* p2 = new HardBOT;
+				}
+				status = false;
 			}
 			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
 			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
@@ -100,11 +134,36 @@ public:
 			DrawString(4, 34, Ganador, olc::BLACK, 5);
 			if (GetKey(olc::Key::N).bPressed)
 			{
-				
+				delete p1;
+				delete p2;
+				delete pWorld;
+				delete pWarWorld;
+
+				Player* p1 = new HumanPlayer(name);
+				pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
+				pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
+				cntBarco = 0;
+
+				if (Botdifficulty == 1)
+				{
+					Player* p2 = new EasyBOT;
+				}
+				else if (Botdifficulty == 2)
+				{
+					Player* p2 = new MediumBot;
+				}
+				else if (Botdifficulty == 3)
+				{
+					Player* p2 = new HardBOT;
+				}
+				status = false;
 			}
+
 			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
 			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
 		}
+			
+		
 		
 	}
 
@@ -115,13 +174,12 @@ public:
 		SDL_Init(SDL_INIT_AUDIO);*/
 		/// SDL mixer
 
-
-		//gMusic = Mix_LoadMUS("Music/war.wav"); 
+		/// Cargo los audios de sus respectivas carpetas
+		//gMusic = Mix_LoadMUS("Music/war.wav");  
 		//gHitD = Mix_LoadWAV("Music/HitDest.wav");
 		//gHit = Mix_LoadWAV("Music/Hit.wav");
 		//gMiss = Mix_LoadWAV("Music/Miss.wav");
-		//Mix_PlayMusic(gMusic, -1);
-
+		//Mix_PlayMusic(gMusic, -1); /// la musica siempre inicia con el juego en loop infinita
 
 
 		/// Cargo la direecion de mis sprites.
@@ -168,7 +226,7 @@ public:
 			(vCell.y - vWorldOrigen.y) - (vCell.x - vWorldOrigen.x)
 		};
 
-		/// ╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ X 2
+		/// ╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ X 2 (para las cordenadas en el mapa 2)
 		olc::vi2d vSelected2 =
 		{
 			(vCell.y - vWarOrigen.y) + (vCell.x - vWarOrigen.x),
@@ -176,9 +234,8 @@ public:
 		};
 
 		int nLog = 0; /// Variable de control textos flotantes.
-		int Hori = 1; /// Variable de control poss.
-		int vert = 1; /// Variable de control poss.
-		bool IsRunnig = true; /// Variable de juego en funcionamiento.
+		int Hori = 1; /// Variable de control poss barquitos.
+		int vert = 1; /// Variable de control poss barquitos.
 
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
@@ -226,7 +283,7 @@ public:
 				/// Convierte las celdas a cordenadas del mundo.
 				olc::vi2d vWorld = ToScreen(x, y);
 
-				switch (pWorld[y * vWorldSize.x + x])
+				switch (pWorld[y * vWorldSize.x + x]) /// dibujos en el mapa cada case reprensenta un dibujo.
 				{
 				case 0:
 					// Ocean Tile
@@ -267,7 +324,7 @@ public:
 			{
 				olc::vi2d vWorld2 = ToScreen2(x, y);
 
-				switch (pWarWorld[y * vWorldWarSize.x + x])
+				switch (pWarWorld[y * vWorldWarSize.x + x])/// dibujos en el mapa cada case reprensenta un dibujo.
 				{
 				case 0:
 					// Mapa sin descubrir.                              
@@ -295,6 +352,7 @@ public:
 
 		for (auto& s : listEvents)
 		{
+			// color del texto mostrado por pantalla , como la variable se resetea puedo ir cambiando el color a medida que avanza
 			// 8 + 20  Separacion entre textos olc::Pixel(nLog * -17, nLog * -17, nLog * -17)        /// los 3 * 16 
 			DrawString(320, nLog * 8 - 8, s, olc::Pixel(nLog * 18, nLog * 18, nLog * 18));
 			nLog++;
@@ -305,11 +363,13 @@ public:
 
 		//////////////////////////////// FIN PRIMITIVAS DEL JUEGO ///////////////////////////////////////////////
 
-		/// Rotacion de los barcos.
-		if (GetKey(olc::Key::R).bPressed)
+
+		/*if (GetKey(olc::Key::A).bPressed) /// Debug Me deja ver la matriz real del player humano en consola 
 		{
-			p1->piezas[cntBarco].setOrientation();
-		}
+			p1->board.mostrarMapa();
+			std::cout << "\n" << std::endl;
+		}*/
+
 
 		/// inicio el mapa del bot y lo traigo a pantalla
 		if (GetKey(olc::Key::E).bPressed) 
@@ -319,6 +379,7 @@ public:
 			Clear(olc::VERY_DARK_CYAN);
 			vWarOrigen = { 16, 4 };
 			p2->placeShips(vSelected.x, vSelected.y);
+			//p2->board.mostrarMapa(); /// Debug Me deja ver la matriz real del player bot en consola 
 		}
 
 		///// Control de la musica
@@ -353,16 +414,22 @@ public:
 		olc::vi2d vSelectedWorld = ToScreen(vSelected.x, vSelected.y);
 		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y);
 		
+		/// Rotacion de los barcos.
+		if (GetKey(olc::Key::R).bPressed)
+		{
+			p1->piezas[cntBarco].setOrientation();
+		}
 
 		/// Coloco mis barcos en pantalla 
 		if (GetMouse(0).bPressed && status)
 		{
-			if (p1->placeShips(vSelected.x, vSelected.y)) { /// Coloca
-
+			std::cout << "Hola" << std::endl;
+			if (p1->placeShips(vSelected.x, vSelected.y)) { /// Coloca los barcos
+				
 				if (p1->piezas[cntBarco].getOrientation())
 					Hori = 10;
 
-				switch (cntBarco)
+				switch (cntBarco) /// Dibujo para cada barco en mapa
 				{
 				case 0: /// Barco de 2
 					++pWorld[vSelected.y * vWorldSize.x + vSelected.x] = 1;
@@ -446,7 +513,7 @@ public:
 						
 						//// Disparo de la IA // 
 						Reg_shotIA = p2->disparar(vSelected2.x, vSelected2.y, p1->board);
-						IA_shot++;
+						IA_shot++; /// un contador de disparos.
 						if (Reg_shotIA == nullptr)
 						{
 							AddEvent(">IA "+p2->name+": --[AGUA]--");
@@ -472,12 +539,12 @@ public:
 		
 
 		// Doy la textura de seleccion para cada barco y el mundo
-		if (vMouse.x && vMouse.y != NULL) /// size del barquito y rotazion 
+		if (vMouse.x && vMouse.y != NULL)  
 		{
 			if (p1->piezas[cntBarco].getOrientation())
 				vert = -1; /// Convierto cada posicion en negativo para seguir la rotacion 
 
-			switch (cntBarco)
+			switch (cntBarco) /// size del barquito y rotazion 
 			{
 			case 0: 
 				DrawPartialSprite(vSelectedWorld.x, vSelectedWorld.y, isoPng, 0 * isoTileSize.x, 0, isoTileSize.x, isoTileSize.y);
@@ -513,28 +580,29 @@ public:
 		}
 
 		
-		if (GetKey(olc::Key::ESCAPE).bPressed)
+		if (GetKey(olc::Key::ESCAPE).bPressed) // ESC para salir del exe.
 		{
+		  delete p1;
+		  delete p2;
 		  IsRunnig = false;
 		}
 
 		///////////////// DIBUJO DATOS AL MAPA /////////////////////////////////////////////////////////////////
-
-
 		
-		// Go back to normal drawing with no expected transparency
+		// Pantalla normal , sin transparencia.
 		SetPixelMode(olc::Pixel::NORMAL);
 
-		// Draw Debug Info
+		// DEBUG INFO A PANTALLA
 		DrawString(4, 4, "Mouse   : " + std::to_string(vMouse.x) + ", " + std::to_string(vMouse.y), olc::BLACK);
 		DrawString(4, 14, "Cell    : " + std::to_string(vCell.x) + ", " + std::to_string(vCell.y), olc::BLACK);
 		DrawString(4, 24,"Jugador -> ["+p1->name+"]", olc::RED);
 		DrawString(650, 2, "------------------",olc::WHITE);
-		DrawString(650, 12," Enemigo IA ->["+p2->name+"]",olc::RED);
-		DrawString(650, 22," La IA disparo ->["+ std::to_string(IA_shot) +"]");
+		DrawString(650, 12,"Enemigo : ["+p2->name+"]",olc::RED);
+		DrawString(650, 22,"Disparos : ["+ std::to_string(IA_shot) +"]");
 		DrawString(650, 32,"-------------------",olc::WHITE);
+		DrawString(610, 290, "Precione [ESC] para salir del juego.", olc::WHITE);
 		
-		if (!status)
+		if (!status) /// antes de jugar 
 		{
 			DrawString(220, 4, ".:Batalla Naval UTN:.", olc::WHITE, 1);
 			DrawString(220, 14, "Made by :", olc::WHITE, 1);
@@ -542,13 +610,13 @@ public:
 			DrawString(70, 150, "Presione la tecla [E] para Jugar", olc::RED, 3);
 			DrawString(70, 165, "--------------------------------", olc::RED, 3);
 		}
-		else if (status && cntBarco != 5)
+		else if (status && cntBarco != 5) /// jugando
 		{
 			DrawString(300, 50, "|Coloque sus Flotas en el mapa con agua |",olc::WHITE,1);
 			DrawString(300, 60, "|Flota ->["+p1->piezas[cntBarco].name +"]<",olc::WHITE,1);
 			DrawString(300, 70, "|Presiona [R] para rotar el Barco       |", olc::WHITE, 1);
 		}
-		else if (cntBarco == 5 && IA_shot == 0)
+		else if (cntBarco == 5 && IA_shot == 0) /// info disparo
 		{
 			DrawString(300, 45, "-----------------------------------------", olc::RED, 1);
 			DrawString(300, 50, "|Dispara en el Mapa enemigo en blanco,  |", olc::RED, 1);
@@ -573,6 +641,7 @@ public:
 		return IsRunnig;
 	}
 
+	/// Metodo para liberar memoria.
 	bool OnUserDestroy() override
 	{
 		/*Mix_FreeMusic(gMusic);

@@ -2,9 +2,9 @@
 #include <string>
 #include "Game.h"
 
-
 int main(int argc, char * arg[])
 {
+
 	int difficulty = 1;
 	std::cout << "Bienvenido a .:Battlleship:. UTN" << std::endl;
 	do {
@@ -24,9 +24,13 @@ int main(int argc, char * arg[])
 
 	Game * demo = nullptr;
 	demo = new Game(difficulty);
-	
+
 	if (demo->Construct(900, 300, 2, 2))
 		demo->Start();
+	demo->OnUserDestroy();
+	
+	delete demo;
+
 	std::cout << "\n\n" << std::endl;
 	std::cout << "\t\t----------------------------------" << std::endl;
 	std::cout << "\t\t.-.-.Muchas gracias Por Jugar.-.-." << std::endl;
