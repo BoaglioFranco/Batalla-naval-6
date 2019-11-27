@@ -30,10 +30,10 @@
     <ClCompile Include="src\Celda.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComputerPlayer.cpp">
+    <ClCompile Include="src\HardBOT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\HardBOT.cpp">
+    <ClCompile Include="src\ComputerPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,5 +80,19 @@
   <ItemGroup>
     <Text Include="src\Barco.txt" />
     <Text Include="barcos.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Music\Hit.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Music\HitDest.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Music\Miss.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="Music\war.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

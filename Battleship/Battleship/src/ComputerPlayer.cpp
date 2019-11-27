@@ -28,22 +28,22 @@ bool ComputerPlayer::placeShips(int& x, int& y) {
 		do {
 			x = rand() % 10;
 			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
-			if(rand() % 2)
+			if (rand() % 2)
 				piezas[i].setOrientation();
-			
+
 		} while (!board.insertShip(x, y, piezas[i]));
 	}
 
 	return 1;
 }
 
-Barco * ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
+Barco* ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 
 	srand(time(0));
 	do {
 		x = rand() % 10;
 		y = rand() % 10; //Dispara random
-	} while(Mapa_enemigo.grid[x][y].isShot);
+	} while (Mapa_enemigo.grid[x][y].isShot);
 
 	Barco* barcoDisparado = nullptr;
 	if (Mapa_enemigo.RegistrarDisparo(x, y))
@@ -54,4 +54,3 @@ Barco * ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 
 	return barcoDisparado;
 }
-

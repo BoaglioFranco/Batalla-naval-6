@@ -1,7 +1,10 @@
 #include "HumanPlayer.h"
 
- HumanPlayer::HumanPlayer(const std::string& name) {
-	this->name = name;
+ HumanPlayer::HumanPlayer() {
+
+	 std::cout << "Ingrese el nombre de jugador\n";
+	 std::getline(std::cin >> std::ws, name); 
+	 this->name = name;
 
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
 	archivoBarcos.open("barcos.txt");

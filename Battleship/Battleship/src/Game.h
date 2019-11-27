@@ -2,15 +2,19 @@
 #include "olcPixelGameEngine.h"
 #include <string>
 #include <iostream>
+//#include <SDL2/SDL.h>
+//#include <SDL2/SDL_mixer.h>
 #include "HumanPlayer.h"
 #include "HardBOT.h"
+#include "ComputerPlayer.h"
 
 
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine
 {
 private:
-
+	
+	
 	static const int _WordX = 10; /// Tamño de mi mapa eje x 
 	static const int _WordY = 10; /// Tamño de mi mapa eje y
 
@@ -26,16 +30,24 @@ private:
 	/// Puntero que va a contener mis sprite a dibujar en consola.
 	olc::Sprite* isoPng = nullptr;
 	olc::Sprite* isoPng2 = nullptr;
-	
-	HumanPlayer * p1 = new HumanPlayer("Facundo");
-	HardBOT * p2 = new HardBOT;
+
+	HumanPlayer* p1 = new HumanPlayer();
+	Player* p2 = nullptr;
+	ComputerPlayer* A = nullptr;
 	Barco* Reg_shot = nullptr;
 	Barco* Reg_shotIA = nullptr;
 	std::string Ganador;
 	/// Puntero para contener mi matriz para crear un mundo 2D en un arreglo.
+	
 	int* pWorld = nullptr;
 	int* pWarWorld = nullptr;
-	
+	int Botdifficulty;
+
+	/*Mix_Music* gMusic = nullptr;
+	Mix_Chunk* gHitD = nullptr;
+	Mix_Chunk* gHit = nullptr;
+	Mix_Chunk* gMiss = nullptr;*/
+
 	int cntBarco = 0; /// contador de barcos en mapa. graficos.
 	int IA_shot = 0; /// Contador de disparos .
 	bool status = false; /// Bool para iniciar el juego .
@@ -45,13 +57,25 @@ private:
 
 public:
 
-
-	Game()
+	Game(int difficulty)
 	{
+		this->Botdifficulty = difficulty;
+		
+		if (Botdifficulty == 1)
+		{
+			std::cout << "Hola easyplayer" << std::endl;
+			p2 = new ComputerPlayer;
+		}
+		else if (Botdifficulty == 2)
+		{
+			std::cout << "Hola hardbot" << std::endl;
+			p2 = new HardBOT;
+		}
+		
 		sAppName = "Game";
 	}
-
-	void Winner(HumanPlayer* p1, HardBOT* p2)
+	
+	void Winner(HumanPlayer* p1, Player * p2)
 	{
 		if (p1->revisarFlota() == false)
 		{
@@ -86,10 +110,25 @@ public:
 
 	bool OnUserCreate() override
 	{
+		/// SDL mixer
+		/*Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+		SDL_Init(SDL_INIT_AUDIO);*/
+		/// SDL mixer
+
+
+		//gMusic = Mix_LoadMUS("Music/war.wav"); 
+		//gHitD = Mix_LoadWAV("Music/HitDest.wav");
+		//gHit = Mix_LoadWAV("Music/Hit.wav");
+		//gMiss = Mix_LoadWAV("Music/Miss.wav");
+		//Mix_PlayMusic(gMusic, -1);
+
+
+
 		/// Cargo la direecion de mis sprites.
 		isoPng = new olc::Sprite("assets/iso1.png"); 
 		isoPng2 = new olc::Sprite("assets/iso2.png");
 		/// Doy el tamaño de mi mapa al arreglo.
+
 		pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 		pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
 		/// Un for para ir cambiando de eventos.
@@ -121,7 +160,7 @@ public:
 		olc::Pixel col = isoPng->GetPixel(3 * isoTileSize.x + vOffset.x, vOffset.y);
 
 		/// Magia ╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ
-		/// Mentira fran despues comento bien lo que hace
+		/// Mentira
 		/// Basicamente Crea crea un array 2d de donde estas "seleccionadndo" en el mapa
 		olc::vi2d vSelected =
 		{
@@ -247,7 +286,7 @@ public:
 			}
 		}
 
-		
+		/// Envio un "evento" texto al vector y lo muestro por pantalla 
 		auto AddEvent = [&](std::string s)
 		{
 			listEvents.push_back(s);
@@ -266,35 +305,46 @@ public:
 
 		//////////////////////////////// FIN PRIMITIVAS DEL JUEGO ///////////////////////////////////////////////
 
-		/*Luego de dibujar las primitivas del mapa entra el jugador y bot con sus methodos*/
-		/*El jugador coloca sus baracos al terminar se colocan barcos al bot*/
-		/*El jugar dispara y recibe la informacion del bot*/
-		/*Bot dispara y recibo la informacion*/
-		/**/
-
 		/// Rotacion de los barcos.
 		if (GetKey(olc::Key::R).bPressed)
 		{
 			p1->piezas[cntBarco].setOrientation();
 		}
 
-		if (GetKey(olc::Key::E).bPressed) /// Solo para debugiar
+		/// inicio el mapa del bot y lo traigo a pantalla
+		if (GetKey(olc::Key::E).bPressed) 
 		{
 			status = true;
 			SetPixelMode(olc::Pixel::NORMAL);
 			Clear(olc::VERY_DARK_CYAN);
 			vWarOrigen = { 16, 4 };
 			p2->placeShips(vSelected.x, vSelected.y);
-			system("cls");
-			p2->board.mostrarMapa();
 		}
 
-		if (GetKey(olc::Key::A).bPressed)
-		{
-			system("cls");
-			p1->board.mostrarMapa();
-		}
-
+		///// Control de la musica
+		//if(GetKey(olc::Key::M).bPressed)
+		//	//Si no hay musica sonando 
+		//	if (Mix_PlayingMusic() == 0)
+		//	{
+		//		//Play music
+		//		Mix_PlayMusic(gMusic, -1);
+		//	}
+		//    //Si la musica esta sonando
+		//	else
+		//	{
+		//		//Si la musica esta pausada
+		//		if (Mix_PausedMusic() == 1)
+		//		{
+		//			//Continuar musica
+		//			Mix_ResumeMusic();
+		//		}
+		//		//Si la musica esta sonando
+		//		else
+		//		{
+		//			//Pausa la musica
+		//			Mix_PauseMusic();
+		//		}
+		//	}
 		
 		// Dibuja el sombreado amaralli en cada tile que selecciono.
 		SetPixelMode(olc::Pixel::ALPHA);
@@ -304,9 +354,10 @@ public:
 		olc::vi2d vSelectedWorld2 = ToScreen2(vSelected2.x, vSelected2.y);
 		
 
+		/// Coloco mis barcos en pantalla 
 		if (GetMouse(0).bPressed && status)
 		{
-			if (p1->placeShips(vSelected.x, vSelected.y)) {
+			if (p1->placeShips(vSelected.x, vSelected.y)) { /// Coloca
 
 				if (p1->piezas[cntBarco].getOrientation())
 					Hori = 10;
@@ -372,17 +423,20 @@ public:
 					{
 						/// Disparo del jugador Humano
 						Reg_shot = p1->disparar(vSelected2.x, vSelected2.y, p2->board);
+						Sleep(300);
 						AddEvent(" ");
 						if (Reg_shot == nullptr) /// Si el disparo devuelve Null Agua
 						{
+							/*Mix_PlayChannel(-1, gMiss, 0);*/
 							AddEvent(">"+p1->name+": --[AGUA]--");
 							pWarWorld[vSelected2.y * vWorldWarSize.x + vSelected2.x] = 1; // Cambio a una casilla disparada
 						}
 						else {
-							
+							/*Mix_PlayChannel(-1, gHit, 0);*/
 							AddEvent(">"+p1->name+": Le dio a un Barco"); /// Si le das a un Barco
 							if (Reg_shot->hundido()) /// Se fija si fue hundido
 							{
+								/*Mix_PlayChannel(-1, gHitD, 0);*/
 								AddEvent(">" + p1->name + ":");
 								AddEvent("Flota enemiga-["+Reg_shot->name+"]-Hundida"); /// Te dice que barco fue hundido
 							}
@@ -390,8 +444,7 @@ public:
 						}
 
 						
-						//// Disparo de la IA // si dispara 2 veces al mismo lugar causa un bug grafico, es solucionable pero si la IA funciona 
-						//// Jamas volveria a disparar en el mismo lugar
+						//// Disparo de la IA // 
 						Reg_shotIA = p2->disparar(vSelected2.x, vSelected2.y, p1->board);
 						IA_shot++;
 						if (Reg_shotIA == nullptr)
@@ -483,21 +536,24 @@ public:
 		
 		if (!status)
 		{
-			DrawString(250, 4, ".:Batalla Naval UTN:.", olc::WHITE, 1);
-			DrawString(250, 14, "Made by :", olc::WHITE, 1);
-			DrawString(250, 24, "[Facundo , Franco and Martin]", olc::RED, 1);
-			DrawString(250, 55, "Presione la tecla [E] para Jugar", olc::VERY_DARK_RED, 2);
+			DrawString(220, 4, ".:Batalla Naval UTN:.", olc::WHITE, 1);
+			DrawString(220, 14, "Made by :", olc::WHITE, 1);
+			DrawString(220, 24, "[Facundo , Franco and Martin]", olc::VERY_DARK_RED, 1);
+			DrawString(70, 150, "Presione la tecla [E] para Jugar", olc::RED, 3);
+			DrawString(70, 165, "--------------------------------", olc::RED, 3);
 		}
 		else if (status && cntBarco != 5)
 		{
-			DrawString(300, 50, "Coloque sus Flotas en el mapa con agua",olc::WHITE,1);
-			DrawString(300, 60, "Flota ->["+p1->piezas[cntBarco].name +"]",olc::WHITE,1);
-			DrawString(300, 70, "Presiona [R] para rotar el Barco", olc::WHITE, 1);
+			DrawString(300, 50, "|Coloque sus Flotas en el mapa con agua |",olc::WHITE,1);
+			DrawString(300, 60, "|Flota ->["+p1->piezas[cntBarco].name +"]<",olc::WHITE,1);
+			DrawString(300, 70, "|Presiona [R] para rotar el Barco       |", olc::WHITE, 1);
 		}
 		else if (cntBarco == 5 && IA_shot == 0)
 		{
-			DrawString(300, 50, "Dispara en el Mapa enemigo en blanco,", olc::WHITE, 1);
-			DrawString(300, 60, "hasta hundir todos los Barcos enemigos.", olc::WHITE, 1);
+			DrawString(300, 45, "-----------------------------------------", olc::RED, 1);
+			DrawString(300, 50, "|Dispara en el Mapa enemigo en blanco,  |", olc::RED, 1);
+			DrawString(300, 60, "|hasta hundir todos los Barcos enemigos.|", olc::RED, 1);
+			DrawString(300, 65, "-----------------------------------------", olc::RED, 1);
 		}
 		else if (Map_crtlvar)
 		{
@@ -517,11 +573,21 @@ public:
 		return IsRunnig;
 	}
 
+	bool OnUserDestroy() override
+	{
+		/*Mix_FreeMusic(gMusic);
+		Mix_FreeChunk(gHitDest);
+	    Mix_FreeChunk(gHit);
+		Mix_FreeChunk(gMiss);
+		gHitDest = NULL;
+	    gHit= NULL;
+	    gMiss = NULL;
+		gMusic = NULL;
+		Mix_Quit();
+		SDL_Quit();*/
 
+		return true;
+	}
 
 };
 
-void Newgame(Game * A)
-{
-	
-}
