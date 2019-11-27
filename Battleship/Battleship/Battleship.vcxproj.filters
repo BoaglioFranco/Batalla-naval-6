@@ -90,7 +90,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\Barco.txt" />
     <Text Include="barcos.txt" />
   </ItemGroup>
   <ItemGroup>

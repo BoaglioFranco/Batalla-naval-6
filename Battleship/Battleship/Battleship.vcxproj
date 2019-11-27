@@ -189,7 +189,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="barcos.txt" />
-    <Text Include="src\Barco.txt" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Music\Hit.wav" />
