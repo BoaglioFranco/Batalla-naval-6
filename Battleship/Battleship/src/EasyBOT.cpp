@@ -1,6 +1,6 @@
-#include "ComputerPlayer.h"
+#include "EasyBOT.h"
 
-ComputerPlayer::ComputerPlayer() {
+EasyBOT::EasyBOT() {
 	this->name = "Higuain";
 	ite_Barcos = 0;
 
@@ -22,7 +22,7 @@ ComputerPlayer::ComputerPlayer() {
 }
 
 
-bool ComputerPlayer::placeShips(int& x, int& y) {
+bool EasyBOT::placeShips(int& x, int& y) {
 	srand(time(0)); //setea seed para el random
 	for (ite_Barcos = 0; ite_Barcos < 5; ite_Barcos++) {
 		do {
@@ -37,7 +37,7 @@ bool ComputerPlayer::placeShips(int& x, int& y) {
 	return 1;
 }
 
-Barco* ComputerPlayer::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
+Barco* EasyBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 
 	srand(time(0));
 	do {

@@ -1,6 +1,6 @@
 #include "HumanPlayer.h"
 
- HumanPlayer::HumanPlayer() {
+HumanPlayer::HumanPlayer() {
 
 	 std::cout << "Ingrese el nombre de jugador\n";
 	 std::getline(std::cin >> std::ws, name); 
@@ -22,7 +22,7 @@
 	archivoBarcos.close();
 }
 
- HumanPlayer::HumanPlayer(const std::string& name) {
+HumanPlayer::HumanPlayer(const std::string& name) {
 
 	 this->name = name;
 	 ite_Barcos = 0;
