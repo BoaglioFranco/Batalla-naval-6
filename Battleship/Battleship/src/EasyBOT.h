@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h> 
 
-
 class EasyBOT :
 	public Player
 {

@@ -49,9 +49,8 @@ HumanPlayer::HumanPlayer(const std::string& name) {
 	 {
 		   std::cout << "Player " + name + " inserto el barco -> " + piezas[ite_Barcos].name << std::endl;
 		   std::cout << "Se coloco en mapa el Barco: " << piezas[ite_Barcos].name
-			 << "\n tamaño: " << piezas[ite_Barcos].getSize() << "\n"
-			 << "------------------------------------------\n" << 
-			    "valor I "<< ite_Barcos <<std::endl;
+			   << "\n tamaño: " << piezas[ite_Barcos].getSize() << "\n"
+			   << "------------------------------------------\n" << std::endl;
 
 		 ace = true;
 		 ite_Barcos++;

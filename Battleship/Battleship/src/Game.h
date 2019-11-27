@@ -87,6 +87,22 @@ public:
 	
 	void Winner(HumanPlayer* p1, Player * p2)
 	{
+		int A = 0;
+
+		auto AddEvent = [&](std::string s)
+		{
+			listEvents.push_back(s);
+			listEvents.pop_front();
+		};
+
+		for (auto& s : listEvents)
+		{
+			// color del texto mostrado por pantalla , como la variable se resetea puedo ir cambiando el color a medida que avanza
+			// 8 + 20  Separacion entre textos olc::Pixel(nLog * -17, nLog * -17, nLog * -17)        /// los 3 * 16 
+			DrawString(320, A * 8 - 8, s, olc::WHITE);
+			A++;
+		}
+
 		/// reviso constantemente que el jugador o el bot tengan toda su flota
 		/// para determinar un ganador
 		if (p1->revisarFlota() == false)
@@ -103,7 +119,8 @@ public:
 				delete p2;
 				delete pWorld;
 				delete pWarWorld;
-
+				for (int i = 0; i < 30; i++)
+					AddEvent("");
 				Player* p1 = new HumanPlayer(name);
 				pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 				pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
@@ -138,7 +155,8 @@ public:
 				delete p2;
 				delete pWorld;
 				delete pWarWorld;
-
+				for (int i = 0; i < 30; i++)
+					AddEvent("");
 				Player* p1 = new HumanPlayer(name);
 				pWorld = new int[vWorldSize.x * vWorldSize.y]{ 0 };
 				pWarWorld = new int[vWorldWarSize.x * vWorldWarSize.y]{ 0 };
@@ -162,8 +180,9 @@ public:
 			DrawString(4, 84, "Presione [N] para Jugar de nuevo", olc::DARK_RED, 1);
 			DrawString(4, 94, "Presione [ESC] para Salir del juego", olc::DARK_RED, 1);
 		}
-			
 		
+		
+
 		
 	}
 

@@ -3,6 +3,7 @@
 MediumBot::MediumBot() {
 	this->name = "MediumBot";
 	this->isSearching = true;
+	ite_Barcos = 0;
 
 	///Pone los barcos en piezas
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
