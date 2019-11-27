@@ -9,8 +9,6 @@
 #include "MediumBot.h"
 #include "HardBOT.h"
 
-
-
 /// La clase juego se encarga de usar todos los recursos graficos de OLC::PixelGameEngine
 class Game : public olc::PixelGameEngine
 {
@@ -238,7 +236,6 @@ public:
 		int nLog = 0; /// Variable de control textos flotantes.
 		int Hori = 1; /// Variable de control poss barquitos.
 		int vert = 1; /// Variable de control poss barquitos.
-		
 
 		/// Donde coloques el cursor dibuja el sprite adyasente ( ͡° ͜ʖ ͡° )
 		if (col == olc::RED) vSelected += {-1, +0};
