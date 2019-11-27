@@ -25,7 +25,7 @@ int main(int argc, char * arg[])
 	Game * demo = nullptr;
 	demo = new Game(difficulty);
 	
-	if (demo->Construct(900, 300, 2, 2, true))
+	if (demo->Construct(900, 300, 2, 2))
 		demo->Start();
 	std::cout << "\n\n" << std::endl;
 	std::cout << "\t\t----------------------------------" << std::endl;

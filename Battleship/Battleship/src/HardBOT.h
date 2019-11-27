@@ -3,6 +3,15 @@
 #include <stdlib.h>
 #include <time.h> 
 #include <vector>
+
+typedef struct _stCoordenadasHardB {
+	int x;
+	int y;
+	Barco* provenienteDe;
+
+	
+};
+
 class HardBOT :
 	public Player
 {
@@ -18,10 +27,12 @@ private:
 	void resetearHeatMap();
 	void setShot(int x, int y);
 
-	std::vector<int> CoordenadasSospechosas;
-	int matrixToInt(int x, int y);
-	void intToMatrix(int& x, int& y, int num);
-	void agregaSospechosos(int x, int y);
+	std::vector<_stCoordenadasHardB> CoordenadasSospechosas;
+	void eligeSospechoso(int& x, int& y);
+	//int matrixToInt(int x, int y);
+	//void intToMatrix(int& x, int& y, int num);
+	void agregaSospechosos(int x, int y, Barco& provenienteDe);
+	void BorraHundidoDeSospechosas(Barco& pHundido);
 public:
 	HardBOT();
 	Barco* disparar(int& x, int& y, Mapa& Mapa_enemigo) override;
