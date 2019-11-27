@@ -4,6 +4,7 @@ HardBOT::HardBOT() {
 
 	this->name = "HardBot";
 	this->isSearching = true;
+	ite_Barcos = 0;
 
 	///Pone los barcos en piezas
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
@@ -26,6 +27,59 @@ HardBOT::HardBOT() {
 	}
 
 
+}
+
+bool HardBOT::placeShips(int& x, int& y) {//coloca todos los barcos de la ia al comenzar la partida.
+	srand(time(0)); //setea seed para el random
+	for (ite_Barcos = 0; ite_Barcos < 5; ite_Barcos++) {//la int estatica previene que el metodo sea llamado multiples veces
+		do {
+			x = rand() % 10;
+			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
+			if (rand() % 2)
+				piezas[ite_Barcos].setOrientation();
+
+		} while (!board.insertShip(x, y, piezas[ite_Barcos]));
+	}
+
+	return 1;
+}
+
+Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {//Accion de disparar
+	srand(time(0));
+
+	if (isSearching) {//La IA realiza dos algoritmos distintos dependiendo de si encontro al barco o no
+
+		funcionProbabilidad();//Determina donde es mas probable que haya un barco y elige esa casilla
+		eligePos(x, y);
+	}
+	else {
+		eligeSospechoso(x, y); //elige una casilla del vector de coordenadas sospechosas
+	}
+
+
+	Barco* barcoDisparado = nullptr;
+	if (Mapa_enemigo.RegistrarDisparo(x, y))//efectua el disparo
+	{
+		std::cout << x << " " << y << std::endl;
+		resetearHeatMap(); //modifica los valores necesarios
+		setShot(x, y);     //en heatmap.
+		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
+		if (barcoDisparado) {
+			if (barcoDisparado->hundido()) {
+				remueveDeBarcosEnemigos(*barcoDisparado);//si se hundio el barco lo saca del vector de barcos buscados
+				BorraHundidoDeSospechosas(*barcoDisparado);
+			}
+			else {
+				agregaSospechosos(x - 1, y, *barcoDisparado);
+				agregaSospechosos(x + 1, y, *barcoDisparado); //Inserta las casillas de alrededor
+				agregaSospechosos(x, y - 1, *barcoDisparado); //de la disparada al vector de 
+				agregaSospechosos(x, y + 1, *barcoDisparado); //casillas sospechosas
+			}
+		}
+	}
+
+	this->isSearching = (CoordenadasSospechosas.size() < 1);//si las coordenadas estan vacias se pone en modo busqueda, y visceversa
+	return barcoDisparado;
 }
 
 
@@ -63,20 +117,6 @@ bool HardBOT::isValidPosition(int x, int y, Barco& ship) {
 
 }
 
-bool HardBOT::placeShips(int& x, int& y) {
-	srand(time(0)); //setea seed para el random
-	for (static int i = 0; i < 5; i++) {//la int estatica previene que el metodo sea llamado multiples veces
-		do {
-			x = rand() % 10;
-			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
-			if (rand() % 2)
-				piezas[i].setOrientation();
-
-		} while (!board.insertShip(x, y, piezas[i]));
-	}
-
-	return 1;
-}
 
 
 void HardBOT::funcionProbabilidad() {//Recorrido que hace todos los turnos la ia para determinar cual es el lugar mas optimo para disparar
@@ -115,7 +155,10 @@ void HardBOT::resetearHeatMap() {//resetea el mapa cada turno.
 
 }
 
-void HardBOT::setShot(int x, int y) {//indica que la casilla del heatmap fue disparada.
+//Hola gustavo si estas leyendo esto gracias por acompañarnos todo el año 
+//Y tenes que decirnos cual fue la parte del codigo que mas te gusto.
+
+void HardBOT::setShot(int x, int y) {//indica que la casilla del heatmap fue disparada para que no se modifique nuevamente
 	heatMap[x][y] = -1;
 
 }
@@ -157,43 +200,7 @@ void HardBOT::eligePos(int& x, int& y) {//Elige la posicion donde conviene dispa
 }
 
 
-Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
-	srand(time(0));
 
-	if (isSearching) {//La IA realiza dos algoritmos distintos dependiendo de si encontro al barco o no
-
-		funcionProbabilidad();//Determina donde es mas probable que haya un barco y elige esa casilla
-		eligePos(x, y);
-	}
-	else {
-		eligeSospechoso(x, y); //elige una casilla del vector de coordenadas sospechosas
-	}
-
-
-	Barco* barcoDisparado = nullptr;
-	if (Mapa_enemigo.RegistrarDisparo(x, y))//efectua el disparo
-	{
-		std::cout << x << " " << y << std::endl;
-		resetearHeatMap(); //modifica los valores necesarios
-		setShot(x, y);     //en heatmap.
-		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
-		if (barcoDisparado) {
-			if (barcoDisparado->hundido()) {
-				remueveDeBarcosEnemigos(*barcoDisparado);//si se hundio el barco lo saca del vector de barcos buscados
-				BorraHundidoDeSospechosas(*barcoDisparado);
-			}
-			else {
-				agregaSospechosos(x - 1, y, *barcoDisparado);
-				agregaSospechosos(x + 1, y, *barcoDisparado);
-				agregaSospechosos(x, y - 1, *barcoDisparado);
-				agregaSospechosos(x, y + 1, *barcoDisparado);
-			}
-		}
-	}
-
-	this->isSearching = (CoordenadasSospechosas.size() < 1);//si las coordenadas estan vacias se pone en modo busqueda, y visceversa
-	return barcoDisparado;
-}
 
 /*
  int HardBOT::matrixToInt(int x, int y) {

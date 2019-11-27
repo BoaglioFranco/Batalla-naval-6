@@ -1,6 +1,12 @@
 #pragma once
 #include <iostream>
 
+
+/*
+
+	PARA LAS LISTAS
+
+*/
 template<typename _type> 
 class Node
 {

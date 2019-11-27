@@ -3,6 +3,7 @@
 MediumBot::MediumBot() {
 	this->name = "MediumBot";
 	this->isSearching = true;
+	ite_Barcos = 0;
 
 	///Pone los barcos en piezas
 	std::ifstream archivoBarcos; //lee los barcos desde el archivo y los escribe en el array.
@@ -22,7 +23,7 @@ MediumBot::MediumBot() {
 }
 
 
-bool MediumBot::placeShips(int& x, int& y) {
+bool MediumBot::placeShips(int& x, int& y) {//coloca todos los barcos de la ia al comenzar la partida.
 	srand(time(0)); //setea seed para el random
 	for (ite_Barcos = 0; ite_Barcos < 5; ite_Barcos++) {//la int estatica previene que el metodo sea llamado multiples veces
 		do {

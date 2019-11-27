@@ -22,7 +22,7 @@ EasyBOT::EasyBOT() {
 }
 
 
-bool EasyBOT::placeShips(int& x, int& y) {
+bool EasyBOT::placeShips(int& x, int& y) {//coloca todos los barcos de la ia al comenzar la partida.
 	srand(time(0)); //setea seed para el random
 	for (ite_Barcos = 0; ite_Barcos < 5; ite_Barcos++) {
 		do {

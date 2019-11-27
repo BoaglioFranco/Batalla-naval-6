@@ -1,6 +1,14 @@
 #pragma once
 #include "Nodes.h"
 
+
+///LISTAS genericas con templates.
+///Las codeamos para meter un poco mas de cosas de la catedra y porque queriamos ver como  salian
+///Si hubieramos tenido mas tiempo probablemente hubieramos hecho un operator overload para que sea mas
+///facil iterarlas.
+/// Fueron utilizadas en MediumBot
+
+
 template <typename T>
 class Lista
 {

@@ -1,6 +1,11 @@
 #pragma once
 #include "Mapa.h"
 
+///-------------------------------------------------
+///CLASE PURAMENTE VIRTUAL QUE CONTIENE LOS METODOS|
+///ESCENCIALES PARA EL FUNCIONAMIENTO DE UN JUGADOR|
+///ES PADRE DEL JUGADOR HUMANO Y TODAS LAS IAS (3).|
+///-------------------------------------------------
 class Player
 {
 public:

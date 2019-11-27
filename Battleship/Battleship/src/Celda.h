@@ -2,6 +2,12 @@
 #include "Barco.h"
 #include<fstream>
 
+
+///Unidad basica por la cual estan compuestas los mapas en este juego.
+///Si la celda tiene un barco, tiene un puntero a este.
+///De ser agua el puntero apunta a NULL
+
+
 class Celda
 {
 public:
