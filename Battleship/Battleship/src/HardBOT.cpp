@@ -2,7 +2,7 @@
 
 HardBOT::HardBOT() {
 
-	this->name = "Testing";
+	this->name = "HardBot";
 	this->isSearching = true;
 
 	///Pone los barcos en piezas
@@ -65,14 +65,14 @@ bool HardBOT::isValidPosition(int x, int y, Barco& ship) {
 
 bool HardBOT::placeShips(int& x, int& y) {
 	srand(time(0)); //setea seed para el random
-	for (ite_Barcos = 0; ite_Barcos < 5; ite_Barcos++) {
+	for (static int i = 0; i < 5; i++) {//la int estatica previene que el metodo sea llamado multiples veces
 		do {
 			x = rand() % 10;
 			y = rand() % 10; //pone coordenadas random hasta que encuentre una que funcione
 			if (rand() % 2)
-				piezas[ite_Barcos].setOrientation();
+				piezas[i].setOrientation();
 
-		} while (!board.insertShip(x, y, piezas[ite_Barcos]));
+		} while (!board.insertShip(x, y, piezas[i]));
 	}
 
 	return 1;
@@ -160,7 +160,6 @@ void HardBOT::eligePos(int& x, int& y) {//Elige la posicion donde conviene dispa
 Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 	srand(time(0));
 
-	puts("\n Comienzo de funcion");
 	if (isSearching) {
 		funcionProbabilidad();
 		eligePos(x, y);
@@ -179,16 +178,13 @@ Barco* HardBOT::disparar(int& x, int& y, Mapa& Mapa_enemigo) {
 		setShot(x, y);
 		barcoDisparado = Mapa_enemigo.grid[x][y].miembroDe;
 		if (barcoDisparado) {
-			puts("Barcodisparado");
 			if (barcoDisparado->hundido())
 				remueveDeBarcosEnemigos(*barcoDisparado);//si se hundio el barco lo saca del vector de barcos buscados
 			else {
-				std::cout << "entrando zona mala" << "\n";
 				agregaSospechosos(x - 1, y);
 				agregaSospechosos(x + 1, y);
 				agregaSospechosos(x, y - 1);
 				agregaSospechosos(x, y + 1);
-				std::cout << "saliendo zona mala" << "\n";
 			}
 		}
 	}
